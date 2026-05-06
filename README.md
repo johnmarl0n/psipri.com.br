@@ -60,4 +60,4 @@ dotnet publish -c Release
 Este projeto é de uso exclusivo e não possui uma licença aberta (**No License**). Todos os direitos reservados ao autor.
 
 ---
-Desenvolvido por **Priscila Batista** com foco em ética e excelência profissional.
+Desenvolvido por **John Dias** (johnmarl0n) para Dra. Priscila Batista.
