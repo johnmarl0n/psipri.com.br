@@ -14,6 +14,14 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+// Ensure absolute path for SQLite to avoid issues in hosted environments
+if (connectionString.Contains("DataSource=psipri.db", StringComparison.OrdinalIgnoreCase) || 
+    connectionString.Contains("Data Source=psipri.db", StringComparison.OrdinalIgnoreCase))
+{
+    var dbPath = Path.Combine(builder.Environment.ContentRootPath, "psipri.db");
+    connectionString = $"Data Source={dbPath}";
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
@@ -28,15 +36,70 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Configure CSRF (Antiforgery)
-builder.Services.AddAntiforgery(options => {
-    options.HeaderName = "X-CSRF-TOKEN";
+// Configure Cookies for the temporary URL (allowing HTTP)
+builder.Services.ConfigureApplicationCookie(options => {
+    options.Cookie.HttpOnly = true;
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.LoginPath = "/Identity/Account/Login";
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+    options.SlidingExpiration = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
+
+// Configure Antiforgery to work with the temporary URL
+builder.Services.AddAntiforgery(options => {
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+
+// --- Automatic Migrations and Seeding ---
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        context.Database.Migrate();
+
+        // Seed Default User
+        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+        var adminEmail = "priscilabatista.dias@uol.com.br";
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+        if (adminUser == null)
+        {
+            adminUser = new IdentityUser { 
+                UserName = adminEmail, 
+                Email = adminEmail, 
+                EmailConfirmed = true 
+            };
+            await userManager.CreateAsync(adminUser, "Pri@2024!");
+        }
+        else
+        {
+            // Update password to match the user's request
+            var token = await userManager.GeneratePasswordResetTokenAsync(adminUser);
+            await userManager.ResetPasswordAsync(adminUser, token, "Pri@2024!");
+        }
+
+        // Ensure ONLY this user exists (Apenas 1 usuário)
+        var otherUsers = userManager.Users.Where(u => u.Email != adminEmail).ToList();
+        foreach (var user in otherUsers)
+        {
+            await userManager.DeleteAsync(user);
+        }
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+    }
+}
 
 // --- HTTP Request Pipeline ---
 
@@ -45,8 +108,12 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+else
+{
+    app.UseDeveloperExceptionPage();
+}
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();

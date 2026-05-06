@@ -17,6 +17,18 @@
         .btn-login:hover { filter: brightness(1.2); transform: translateY(-2px); }
         .footer-link { text-align: center; margin-top: 20px; font-size: 0.9rem; opacity: 0.6; }
         .footer-link a { color: var(--primary-color); text-decoration: none; }
+        
+        /* Checkbox Fix */
+        .form-check { display: flex; align-items: center; margin-bottom: 20px; }
+        .form-check-input { 
+            width: 18px !important; 
+            height: 18px !important; 
+            margin: 0 10px 0 0 !important; 
+            cursor: pointer;
+            appearance: auto !important; /* Force default checkbox appearance */
+            -webkit-appearance: checkbox !important;
+        }
+        .form-check-label { cursor: pointer; font-size: 0.9rem; color: var(--text-dark); }
     </style>
 </head>
 <body>
@@ -28,5 +40,6 @@
         </div>
         @RenderBody()
     </div>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

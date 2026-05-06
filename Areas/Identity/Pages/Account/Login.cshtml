@@ -1,0 +1,65 @@
+@page
+@model psipri.com.br.Areas.Identity.Pages.Account.LoginModel
+
+@{
+    ViewData["Title"] = "Entrar";
+}
+
+<h1 class="serif" style="color: var(--primary-color); font-size: 2rem; margin-bottom: 20px;">@ViewData["Title"]</h1>
+
+<form id="account" method="post" asp-antiforgery="true">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert" style="margin-bottom: 15px; font-size: 0.9rem;"></div>
+    
+    <div class="mb-3">
+        <label asp-for="Input.Email" class="form-label" style="font-weight: 600; font-size: 0.9rem; color: var(--text-dark);">E-mail</label>
+        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Ex: nome@email.com" />
+        <span asp-validation-for="Input.Email" class="text-danger" style="font-size: 0.8rem;"></span>
+    </div>
+    
+    <div class="mb-3">
+        <label asp-for="Input.Password" class="form-label" style="font-weight: 600; font-size: 0.9rem; color: var(--text-dark);">Senha</label>
+        <div style="position: relative;">
+            <input asp-for="Input.Password" type="password" class="form-control" id="password-input" autocomplete="current-password" aria-required="true" placeholder="Sua senha" style="padding-right: 45px !important; margin-bottom: 0 !important;" />
+            <button type="button" id="toggle-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #999; cursor: pointer; padding: 5px; z-index: 10; outline: none;">
+                <i class="fas fa-eye" id="eye-icon"></i>
+            </button>
+        </div>
+        <span asp-validation-for="Input.Password" class="text-danger" style="font-size: 0.8rem; display: block; margin-top: 5px; margin-bottom: 15px;"></span>
+    </div>
+    
+    <div class="form-check mb-4" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
+        <input class="form-check-input" asp-for="Input.RememberMe" style="margin: 0 !important; width: 18px !important; height: 18px !important; cursor: pointer;" />
+        <label class="form-check-label" asp-for="Input.RememberMe" style="cursor: pointer; color: var(--text-dark); line-height: 1;">
+            Manter conectado?
+        </label>
+    </div>
+    
+    <div>
+        <button id="login-submit" type="submit" class="btn-login">Entrar</button>
+    </div>
+    
+    <div class="footer-link" style="margin-top: 25px;">
+        <p>
+            <a id="forgot-password" asp-page="./ForgotPassword" style="color: var(--primary-color); font-weight: 600;">Esqueci minha senha</a>
+        </p>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('toggle-password').addEventListener('click', function () {
+            const passwordInput = document.getElementById('password-input');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        });
+    </script>
+}

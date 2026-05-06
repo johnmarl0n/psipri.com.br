@@ -15,20 +15,28 @@ Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, pr
 - **Blog Integrado:** Sistema de posts e "playbooks" para compartilhamento de conhecimento técnico.
 
 ### Área Administrativa (Painel de Manutenção)
-- **Segurança Robusta:** Autenticação via ASP.NET Core Identity com proteção CSRF integrada.
+- **Segurança Robusta:** Autenticação via ASP.NET Core Identity com proteção CSRF refinada e suporte a ambientes sem SSL (URLs temporárias).
 - **Gestão de Conteúdo:** Edição dinâmica da seção "Sobre" com suporte a cores, imagens, vídeos do YouTube e alinhamento via Quill.js.
 - **Gestão de Blog:** CRUD completo de postagens com suporte a conteúdo rico e multimídia.
 - **Visualização Responsiva:** Filtros de CSS customizados para garantir que imagens e vídeos inseridos sejam 100% responsivos no site público.
-- **Layout Profissional:** Dashboard clean e intuitivo para facilitar a manutenção diária.
+- **Login Customizado:** Interface de autenticação totalmente traduzida (PT-BR), limpa e com alternador de visibilidade de senha (eye-toggle) integrado ao campo.
 
 ## 🛠️ Tecnologias Utilizadas
 
 - **Core:** ASP.NET Core 8.0 MVC
-- **Banco de Dados:** SQLite (com Entity Framework Core)
-- **Identidade:** Microsoft.AspNetCore.Identity
+- **Banco de Dados:** SQLite (com caminhos absolutos para máxima compatibilidade em servidores compartilhados)
+- **Identidade:** Microsoft.AspNetCore.Identity (customizado para login único e segurança reforçada)
 - **E-mail:** MailKit (SMTP Integration)
 - **Frontend:** Vanilla JS, CSS3, FontAwesome 6, Quill.js
 - **Otimização:** BuildBundlerMinifier para empacotamento e minificação automática de ativos.
+
+## ⚙️ Melhorias de Estabilização e Produção
+
+Recentemente, o projeto passou por uma rodada de estabilização para garantir o funcionamento perfeito em servidores como **SmarterASP.NET**:
+- **Caminhos de Banco de Dados:** Implementada a resolução automática de caminhos absolutos para o SQLite, evitando falhas de "File Not Found" em ambientes IIS.
+- **Migrações Automáticas:** O sistema agora aplica migrações de banco de dados automaticamente ao iniciar no servidor, dispensando comandos manuais de terminal.
+- **Seeding de Segurança:** Garantia programática de que apenas o usuário administrador ("Priscila") exista, com remoção automática de contas não autorizadas e reset de senha via código.
+- **Políticas de Cookies:** Ajustadas para permitir o login em URLs temporárias via HTTP, mantendo a segurança via `SameAsRequest`.
 
 ## 🚀 Como Iniciar o Projeto
 
