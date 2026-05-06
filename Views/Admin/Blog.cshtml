@@ -1,0 +1,52 @@
+@model IEnumerable<psipri.com.br.Models.BlogPost>
+@{
+    ViewData["Title"] = "Gerenciar Blog";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="admin-header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+    <div>
+        <h1 class="serif">Postagens do Blog</h1>
+        <p style="color: var(--text-muted);">Gerencie seus artigos e playbooks.</p>
+    </div>
+    <div style="display: flex; gap: 15px;">
+        <a asp-action="Index" class="btn" style="background: #eee; color: var(--text-dark);">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </a>
+        <a asp-action="CreatePost" class="btn btn-primary-site">
+            <i class="fas fa-plus"></i> Nova Postagem
+        </a>
+    </div>
+</div>
+
+<div class="blog-table-container" style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; background: var(--white);">
+        <thead>
+            <tr style="border-bottom: 2px solid var(--bg-creme); text-align: left;">
+                <th style="padding: 15px;">Título</th>
+                <th style="padding: 15px;">Data</th>
+                <th style="padding: 15px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in Model)
+            {
+                <tr style="border-bottom: 1px solid var(--bg-creme);">
+                    <td style="padding: 15px; font-weight: 600;">@post.Title</td>
+                    <td style="padding: 15px; color: var(--text-muted);">@post.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td style="padding: 15px; display: flex; gap: 10px;">
+                        <a asp-action="EditPost" asp-route-id="@post.Id" class="btn" style="padding: 8px 15px; font-size: 0.8rem; background: #f0f0f0; color: var(--primary-color);">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form asp-action="DeletePost" asp-route-id="@post.Id" method="post" onsubmit="return confirm('Tem certeza que deseja excluir esta postagem?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn" style="padding: 8px 15px; font-size: 0.8rem; background: #fee2e2; color: #b91c1c;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

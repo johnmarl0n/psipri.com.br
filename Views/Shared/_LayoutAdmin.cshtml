@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Área de Manutenção</title>
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon-32x32.svg" asp-append-version="true" />
+    
+    <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        .admin-main {
+            background: var(--white);
+            padding: 50px;
+            border-radius: 30px;
+            box-shadow: var(--shadow-soft);
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .admin-nav-links li a {
+            color: var(--text-dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition-fast);
+        }
+        .admin-nav-links li a:hover {
+            color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body style="background-color: var(--bg-creme);">
+    <header class="main-nav" style="background: var(--white); padding: 10px 0;">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <a asp-area="" asp-controller="Admin" asp-action="Index">
+                <img src="~/images/logo.svg" alt="Admin Logo" style="height: 45px;" asp-append-version="true" />
+            </a>
+            <ul class="admin-nav-links" style="display: flex; gap: 25px; list-style: none; margin: 0; padding: 0; align-items: center;">
+                <li><a asp-controller="Admin" asp-action="Blog">Blog</a></li>
+                <li><a asp-controller="Admin" asp-action="About">Sobre</a></li>
+                <li><a asp-controller="Home" asp-action="Index" target="_blank" style="opacity: 0.6;">Ver Site <i class="fas fa-external-link-alt" style="font-size: 0.8rem;"></i></a></li>
+                <li>
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="btn-logout" style="background:none; border:none; color:#e74c3c; font-weight:600; cursor:pointer; font-family:'Inter', sans-serif;">Sair</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <main role="main" class="container">
+        <div class="admin-main">
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="admin-footer" style="text-align: center; padding: 40px 0; opacity: 0.6; font-size: 0.9rem;">
+        <div class="container">
+            &copy; @DateTime.Now.Year - Priscila - Área de Manutenção
+        </div>
+    </footer>
+
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

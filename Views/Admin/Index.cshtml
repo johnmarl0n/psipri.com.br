@@ -1,0 +1,56 @@
+@{
+    ViewData["Title"] = "Painel de Manutenção";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="admin-dashboard">
+    <h1 class="serif">Bem-vinda, Priscila</h1>
+    <p style="color: var(--text-muted); margin-bottom: 40px;">Gerencie o conteúdo do seu site de forma simples e rápida.</p>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 10px; margin-bottom: 30px;">
+            <i class="fas fa-check-circle"></i> @TempData["Success"]
+        </div>
+    }
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+        <!-- Blog Card -->
+        <a asp-action="Blog" style="text-decoration: none; color: inherit;">
+            <div class="blog-card" style="text-align: center; padding: 40px;">
+                <i class="fas fa-blog" style="font-size: 3rem; color: var(--secondary-color); margin-bottom: 20px;"></i>
+                <h3 class="serif">Gerenciar Blog</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Escreva e publique novas postagens e playbooks.</p>
+            </div>
+        </a>
+
+        <!-- About Card -->
+        <a asp-action="About" style="text-decoration: none; color: inherit;">
+            <div class="blog-card" style="text-align: center; padding: 40px;">
+                <i class="fas fa-user-edit" style="font-size: 3rem; color: var(--secondary-color); margin-bottom: 20px;"></i>
+                <h3 class="serif">Editar "Sobre"</h3>
+                <p style="font-size: 0.9rem; color: var(--text-muted);">Atualize sua biografia e informações profissionais.</p>
+            </div>
+        </a>
+
+        <!-- Hero Management Card -->
+        <div class="blog-card" style="padding: 40px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="fas fa-image" style="font-size: 3rem; color: var(--secondary-color);"></i>
+                <h3 class="serif">Imagem do Topo</h3>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 20px;">Altere a foto principal da página inicial.</p>
+            
+            <form asp-action="UploadHero" method="post" enctype="multipart/form-data">
+                <input type="file" name="heroFile" id="heroFile" style="display: none;" onchange="this.form.submit()" accept="image/*" />
+                <button type="button" onclick="document.getElementById('heroFile').click()" class="btn btn-primary-site" style="width: 100%; font-size: 0.9rem; padding: 12px;">
+                    <i class="fas fa-upload"></i> Escolher Nova Foto
+                </button>
+            </form>
+            
+            <div style="margin-top: 15px; text-align: center;">
+                <span style="font-size: 0.75rem; opacity: 0.6;">Imagem atual: <a href="@ViewBag.HeroImage" target="_blank">Visualizar</a></span>
+            </div>
+        </div>
+    </div>
+</div>

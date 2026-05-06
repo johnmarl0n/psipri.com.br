@@ -1,0 +1,29 @@
+@model psipri.com.br.Models.BlogPost
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container" style="max-width: 800px; padding: 100px 20px;">
+    <a asp-action="Index" class="btn" style="background: #eee; color: var(--text-dark); margin-bottom: 40px; display: inline-block; text-decoration: none;">
+        <i class="fas fa-arrow-left"></i> Voltar ao Início
+    </a>
+
+    <article class="post-detail">
+        <span style="color: var(--secondary-color); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">@Model.CreatedAt.ToString("dd 'de' MMMM, yyyy")</span>
+        <h1 class="serif" style="font-size: 3rem; margin: 20px 0 40px; color: var(--primary-color);">@Model.Title</h1>
+        
+        <div class="post-content serif" style="font-size: 1.25rem; line-height: 1.8; color: var(--text-dark);">
+            @Html.Raw(Model.Content)
+        </div>
+    </article>
+    
+    <hr style="margin: 60px 0; border: 0; border-top: 1px solid var(--bg-creme);" />
+    
+    <div style="text-align: center; background: var(--bg-creme); padding: 50px; border-radius: 30px;">
+        <h3 class="serif">Ficou com alguma dúvida?</h3>
+        <p style="margin-bottom: 30px;">Entre em contato para saber mais sobre este assunto.</p>
+        <a href="https://wa.me/5500000000000?text=@Uri.EscapeDataString("Olá Priscila. Vi seu artigo '" + Model.Title + "' e gostaria de tirar uma dúvida.")" target="_blank" class="btn btn-whatsapp">
+            <i class="fab fa-whatsapp"></i> Conversar no WhatsApp
+        </a>
+    </div>
+</div>

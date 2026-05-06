@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Editar Sobre";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="admin-header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <div>
+        <h1 class="serif">Editar Biografia</h1>
+        <p style="color: var(--text-muted);">Este conteúdo será exibido na seção "Sobre" da página inicial.</p>
+    </div>
+    <a asp-action="Index" class="btn" style="background: #eee; color: var(--text-dark);">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </a>
+</div>
+
+    <form asp-action="UpdateAbout" method="post" id="aboutForm">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <div id="editor" style="height: 400px; background: #fafafa; border-radius: 12px; border: 1px solid #eee;">
+                @Html.Raw(ViewBag.AboutContent)
+            </div>
+            <input type="hidden" name="content" id="contentInput" />
+        </div>
+        
+        <div style="margin-top: 30px; display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary-site">
+                <i class="fas fa-save"></i> Salvar Alterações
+            </button>
+            <a asp-action="Index" class="btn" style="background: #eee; color: var(--text-dark);">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline'],
+                    ['link', 'blockquote', 'code-block'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }]
+                ]
+            }
+        });
+
+        document.getElementById('aboutForm').onsubmit = function() {
+            document.getElementById('contentInput').value = quill.root.innerHTML;
+        };
+    </script>
+}

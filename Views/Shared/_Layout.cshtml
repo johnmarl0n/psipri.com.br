@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Optimization -->
+    <title>@ViewData["Title"] - Psicóloga em Campinas | Clínica e Jurídica</title>
+    <meta name="description" content="Dra. Priscila Batista - Psicóloga em Campinas especializada em Psicologia Clínica e Jurídica. Atendimento humanizado e perícias judiciais em Campinas e região." />
+    <meta name="keywords" content="Psicóloga em Campinas, Psicologia em Campinas, Psicologia Clínica em Campinas, Psicologia Jurídica em Campinas, Perícia Psicológica Campinas, Dra Priscila Batista" />
+    <link rel="canonical" href="https://psipri.com.br" />
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon-32x32.svg" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav class="main-nav">
+            <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                <a href="/" class="serif" style="text-decoration: none; color: var(--primary-color);">
+                    <img src="~/images/logo.svg" alt="Logo Priscila Batista" style="height: 60px;" asp-append-version="true" />
+                </a>
+                <ul>
+                    <li><a href="#sobre" style="text-decoration: none; color: var(--text-dark); font-weight: 600;">Sobre</a></li>
+                    <li><a href="#blog" style="text-decoration: none; color: var(--text-dark); font-weight: 600;">Blog</a></li>
+                    <partial name="_LoginPartial" />
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Floating Contact Button -->
+    <a href="https://wa.me/5500000000000?text=@Uri.EscapeDataString("Olá Priscila. Gostaria de receber informações sobre como funciona a psicoterapia online.")" class="floating-contact" title="Falar pelo WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/">
+                        <img src="~/images/logo.svg" alt="Logo Priscila Batista" style="height: 50px; margin-bottom: 20px; filter: brightness(0) invert(1);" asp-append-version="true" />
+                    </a>
+                    <p style="opacity: 0.8;">Psicóloga especializada em Clínica e Jurídica. Ética e compromisso com o bem-estar mental e o rigor técnico-legal.</p>
+                </div>
+                <div>
+                    <h4 class="serif" style="color: var(--bg-creme); font-size: 1.4rem;">Links</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 10px;"><a href="#sobre" style="color: var(--bg-creme); text-decoration: none;">Sobre</a></li>
+                        <li style="margin-bottom: 10px;"><a href="#blog" style="color: var(--bg-creme); text-decoration: none;">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="serif" style="color: var(--bg-creme); font-size: 1.4rem;">Redes Sociais</h4>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/priscila-batista-3983211b2/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/priscilapsi_/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>Copyright @DateTime.Now.Year - Priscila Batista - Todos os direitos reservados</p>
+                <p style="margin-top: 10px; font-size: 0.8rem;">
+                    Hospedado por <a href="https://www.smarterasp.net/index?r=johnmarlon" target="_blank" class="smarter-link">SmarterAsp.Net</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

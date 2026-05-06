@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Acesso Restrito - Priscila</title>
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon-32x32.svg" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: var(--bg-creme); display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 30px; box-shadow: var(--shadow-soft); width: 100%; max-width: 400px; }
+        .login-card h1 { text-align: center; margin-bottom: 30px; }
+        .form-control { border-radius: 10px !important; padding: 12px !important; margin-bottom: 20px; border: 1px solid #eee !important; background: #fafafa !important; }
+        .btn-login { width: 100%; background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: var(--transition-fast); }
+        .btn-login:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        .footer-link { text-align: center; margin-top: 20px; font-size: 0.9rem; opacity: 0.6; }
+        .footer-link a { color: var(--primary-color); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="/">
+                <img src="~/images/logo.svg" alt="Logo Priscila" style="height: 60px;" asp-append-version="true" />
+            </a>
+        </div>
+        @RenderBody()
+    </div>
+</body>
+</html>

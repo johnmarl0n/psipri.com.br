@@ -1,0 +1,65 @@
+@model psipri.com.br.Models.BlogPost
+@{
+    ViewData["Title"] = "Editar Postagem";
+    Layout = "_LayoutAdmin";
+}
+
+<div class="admin-header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h1 class="serif">Editar Postagem</h1>
+    <a asp-action="Blog" class="btn" style="background: #eee; color: var(--text-dark);">
+        <i class="fas fa-arrow-left"></i> Voltar
+    </a>
+</div>
+    
+    <form asp-action="EditPost" method="post" id="postForm" style="margin-top: 30px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedAt" />
+        
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label style="font-weight: 700; display: block; margin-bottom: 10px;">Título da Postagem</label>
+            <input asp-for="Title" class="form-control" required />
+        </div>
+
+        <div class="form-group" style="margin-bottom: 25px;">
+            <label style="font-weight: 700; display: block; margin-bottom: 10px;">Resumo</label>
+            <textarea asp-for="Summary" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label style="font-weight: 700; display: block; margin-bottom: 10px;">Conteúdo Completo</label>
+            <div id="editor" style="height: 450px; background: #fafafa; border-radius: 12px; border: 1px solid #eee;">
+                @Html.Raw(Model.Content)
+            </div>
+            <input type="hidden" asp-for="Content" id="contentInput" />
+        </div>
+        
+        <div style="margin-top: 40px; display: flex; gap: 15px;">
+            <button type="submit" class="btn btn-primary-site">
+                <i class="fas fa-save"></i> Salvar Alterações
+            </button>
+            <a asp-action="Blog" class="btn" style="background: #eee; color: var(--text-dark);">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    ['link', 'blockquote', 'code-block', 'image'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['clean']
+                ]
+            }
+        });
+
+        document.getElementById('postForm').onsubmit = function() {
+            document.getElementById('contentInput').value = quill.root.innerHTML;
+        };
+    </script>
+}

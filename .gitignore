@@ -1,0 +1,35 @@
+# .gitignore para projetos ASP.NET Core e Visual Studio
+
+# Build artifacts
+[Bb]in/
+[Oo]bj/
+[Rr]elease/
+[Pp]ublish/
+
+# SQLite database (Excluir do repositório para evitar versionar dados locais)
+*.db
+*.db-shm
+*.db-wal
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# IDE files
+.vs/
+.idea/
+*.swp
+*.lp
+
+# Secret and configuration files
+# appsettings.json costuma ser versionado com placeholders, 
+# mas segredos reais devem ficar no appsettings.Development.json ou UserSecrets
+# appsettings.Development.json
+
+# Tooling and bundling
+node_modules/
+.sass-cache/
+_Temp/

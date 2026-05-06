@@ -1,0 +1,204 @@
+@model IEnumerable<psipri.com.br.Models.BlogPost>
+@{
+    ViewData["Title"] = "Página Inicial";
+}
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-grid">
+            <div class="hero-text">
+                <span style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: var(--secondary-color); font-size: 0.9rem;">Psicóloga Clínica e Jurídica</span>
+                <h1>Saúde mental e ética técnica em um só lugar.</h1>
+                <p>Sou Priscila Batista, psicóloga em Campinas. Ofereço suporte clínico humanizado e perícia psicológica especializada para demandas judiciais.</p>
+                <div class="hero-actions">
+                    <a href="https://wa.me/5500000000000?text=@Uri.EscapeDataString("Olá Priscila. Gostaria de receber informações sobre como funciona a psicoterapia online.")" target="_blank" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Agendar Consulta Online
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="@(ViewBag.HeroImage ?? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800")" alt="Dra. Priscila Batista - Psicóloga em Campinas" />
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Atuação Clínica (Accordion) -->
+<section id="atuacao" style="background-color: var(--white);">
+    <div class="container">
+        <div class="section-title">
+            <h2>Atuação Clínica</h2>
+            <p>Conheça as principais áreas de atendimento e especialidades.</p>
+        </div>
+        
+        <div class="accordion">
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="serif"><i class="fas fa-brain" style="margin-right: 15px; color: var(--secondary-color);"></i> Psicoterapia Individual</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>Atendimento focado no autoconhecimento, resolução de conflitos internos e tratamento de transtornos como ansiedade e depressão. Um espaço seguro para explorar suas emoções e desenvolver novas perspectivas.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="serif"><i class="fas fa-gavel" style="margin-right: 15px; color: var(--secondary-color);"></i> Psicologia Jurídica</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>Atuação técnica em perícias judiciais, assistências técnicas e elaboração de laudos e pareceres. Especializada em casos que envolvem o sistema de justiça, garantindo rigor ético e técnico.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span class="serif"><i class="fas fa-users" style="margin-right: 15px; color: var(--secondary-color);"></i> Orientação Familiar</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>Suporte para famílias em momentos de transição ou conflito, auxiliando na comunicação e no fortalecimento dos vínculos afetivos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Atendimento Online Section -->
+<section id="online" style="background-color: var(--bg-creme);">
+    <div class="container">
+        <div class="hero-grid" style="align-items: flex-start;">
+            <div class="hero-text">
+                <h2 class="serif">Atendimento Online</h2>
+                <p>A psicoterapia online oferece a mesma eficácia do atendimento presencial, com benefícios exclusivos que se adaptam à sua rotina.</p>
+                
+                <div class="online-advantages">
+                    <div style="margin-bottom: 30px;">
+                        <h4 class="serif" style="font-size: 1.4rem;"><i class="fas fa-clock" style="color: var(--secondary-color); margin-right: 15px;"></i> Praticidade e Conforto</h4>
+                        <p style="font-size: 1rem; color: var(--text-muted);">Economize tempo de deslocamento e realize suas sessões no conforto e privacidade do seu ambiente preferido.</p>
+                    </div>
+                    <div style="margin-bottom: 30px;">
+                        <h4 class="serif" style="font-size: 1.4rem;"><i class="fas fa-globe" style="color: var(--secondary-color); margin-right: 15px;"></i> Sem Barreiras Geográficas</h4>
+                        <p style="font-size: 1rem; color: var(--text-muted);">Acesse o suporte psicológico de qualquer lugar do mundo, mantendo a continuidade do tratamento mesmo em viagens.</p>
+                    </div>
+                    <div style="margin-bottom: 30px;">
+                        <h4 class="serif" style="font-size: 1.4rem;"><i class="fas fa-shield-alt" style="color: var(--secondary-color); margin-right: 15px;"></i> Segurança e Sigilo</h4>
+                        <p style="font-size: 1rem; color: var(--text-muted);">As sessões são realizadas via plataformas criptografadas que garantem o sigilo profissional absoluto.</p>
+                    </div>
+                </div>
+            </div>
+            <div style="background: var(--white); padding: 40px; border-radius: 25px; box-shadow: var(--shadow-soft); border-left: 6px solid var(--secondary-color);">
+                <h3 class="serif">Como funciona?</h3>
+                <p>As sessões têm duração média de 50 minutos e são agendadas previamente. Você só precisa de uma conexão estável de internet e um local privativo.</p>
+                <div style="margin-top: 30px;">
+                    <a href="https://wa.me/5500000000000?text=@Uri.EscapeDataString("Olá Priscila. Gostaria de receber informações sobre como funciona a psicoterapia online.")" target="_blank" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Tirar Dúvidas no WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog / Playbook Section -->
+<section id="blog" style="background-color: var(--white);">
+    <div class="container">
+        <div class="section-title">
+            <h2>Blog & Playbooks</h2>
+            <p>Conhecimento técnico e reflexões sobre psicologia e direito.</p>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="blog-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                @foreach (var post in Model)
+                {
+                    <article class="blog-card" style="background: var(--white); padding: 30px; border-radius: 20px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column;">
+                        <span style="font-size: 0.8rem; color: var(--secondary-color); font-weight: 600; margin-bottom: 10px;">@post.CreatedAt.ToString("dd MMM, yyyy")</span>
+                        <h3 class="serif" style="margin-bottom: 15px; min-height: 3em;">@post.Title</h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; flex-grow: 1;">@post.Summary</p>
+                        <a asp-action="Post" asp-route-id="@post.Id" class="serif" style="text-decoration: none; color: var(--primary-color); font-weight: 700; border-bottom: 2px solid var(--secondary-color); align-self: flex-start;">Ler mais →</a>
+                    </article>
+                }
+            </div>
+        }
+        else
+        {
+            <div style="text-align: center; padding: 40px; background: rgba(255,255,255,0.5); border-radius: 20px; border: 2px dashed #ccc;">
+                <p style="color: var(--text-muted); font-style: italic;">Novas postagens em breve. Acompanhe nossas atualizações!</p>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- About Section (Dynamic) -->
+<section id="sobre" class="section-about" style="background-color: var(--bg-creme);">
+    <div class="container">
+        <div class="section-title">
+            <h2>Sobre a Priscila</h2>
+        </div>
+        <div class="about-content" style="max-width: 850px; margin: 0 auto; text-align: center; font-size: 1.2rem;">
+            @Html.Raw(ViewBag.AboutContent)
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form Section -->
+<section id="contato" style="background: var(--white);">
+    <div class="container" style="max-width: 850px;">
+        <div class="section-title">
+            <h2>Vamos Conversar?</h2>
+            <p>Preencha os campos abaixo para entrar em contato.</p>
+        </div>
+
+        @if (TempData["MessageSent"] != null)
+        {
+            <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+                @TempData["MessageSent"]
+            </div>
+        }
+        @if (TempData["MessageError"] != null)
+        {
+            <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+                @TempData["MessageError"]
+            </div>
+        }
+
+        <div class="contact-form">
+            <form asp-controller="Contact" asp-action="Send" method="post">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Seu Nome</label>
+                        <input type="text" name="name" class="form-control" placeholder="Ex: Maria Silva" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Seu E-mail</label>
+                        <input type="email" name="email" class="form-control" placeholder="email@exemplo.com" required />
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 40px;">
+                    <label>Como posso te ajudar?</label>
+                    <textarea name="message" class="form-control" rows="5" placeholder="Escreva aqui sua mensagem..." required></textarea>
+                </div>
+                <div style="text-align: center;">
+                    <button type="submit" class="btn btn-primary-site" style="padding: 18px 80px;">
+                        Enviar Mensagem via Site
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                const isActive = item.classList.contains('active');
+                document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
+                if (!isActive) item.classList.add('active');
+            });
+        });
+    </script>
+}
