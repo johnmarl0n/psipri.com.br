@@ -10,20 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Register Email Service
 builder.Services.AddTransient<IEmailService, EmailService>();
 
-// Configure Database connection (SQLite)
+// Configure Database connection (SQL Server)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-// Ensure absolute path for SQLite to avoid issues in hosted environments
-if (connectionString.Contains("DataSource=psipri.db", StringComparison.OrdinalIgnoreCase) || 
-    connectionString.Contains("Data Source=psipri.db", StringComparison.OrdinalIgnoreCase))
-{
-    var dbPath = Path.Combine(builder.Environment.ContentRootPath, "psipri.db");
-    connectionString = $"Data Source={dbPath}";
-}
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlServer(connectionString));
 
 // Configure Identity for secure authentication
 builder.Services.AddDefaultIdentity<IdentityUser>(options => {

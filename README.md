@@ -24,7 +24,7 @@ Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, pr
 ## 🛠️ Tecnologias Utilizadas
 
 - **Core:** ASP.NET Core 8.0 MVC
-- **Banco de Dados:** SQLite (com caminhos absolutos para máxima compatibilidade em servidores compartilhados)
+- **Banco de Dados:** Microsoft SQL Server (MSSQL) (otimizado para melhor desempenho e baixíssimo consumo de RAM na hospedagem)
 - **Identidade:** Microsoft.AspNetCore.Identity (customizado para login único e segurança reforçada)
 - **E-mail:** MailKit (SMTP Integration)
 - **Frontend:** Vanilla JS, CSS3, FontAwesome 6, Quill.js
@@ -33,7 +33,7 @@ Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, pr
 ## ⚙️ Melhorias de Estabilização e Produção
 
 Recentemente, o projeto passou por uma rodada de estabilização para garantir o funcionamento perfeito em servidores como **SmarterASP.NET**:
-- **Caminhos de Banco de Dados:** Implementada a resolução automática de caminhos absolutos para o SQLite, evitando falhas de "File Not Found" em ambientes IIS.
+- **Migração de Banco de Dados:** Banco totalmente migrado de SQLite para SQL Server, resolvendo problemas de gargalo de memória RAM e reciclagem de pool de aplicativos no ambiente IIS do SmarterASP.NET.
 - **Migrações Automáticas:** O sistema agora aplica migrações de banco de dados automaticamente ao iniciar no servidor, dispensando comandos manuais de terminal.
 - **Seeding de Segurança:** Garantia programática de que apenas o usuário administrador ("Priscila") exista, com remoção automática de contas não autorizadas e reset de senha via código.
 - **Políticas de Cookies:** Ajustadas para permitir o login em URLs temporárias via HTTP, mantendo a segurança via `SameAsRequest`.
