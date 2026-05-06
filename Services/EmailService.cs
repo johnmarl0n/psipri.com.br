@@ -32,12 +32,14 @@ namespace psipri.com.br.Services
             emailMessage.Body = bodyBuilder.ToMessageBody();
 
             using var client = new SmtpClient();
+            client.CheckCertificateRevocation = false;
             try
             {
-                // Connect to Gmail SMTP
-                await client.ConnectAsync(_config["EmailSettings:Host"], 587, SecureSocketOptions.StartTls);
+                int port = int.Parse(_config["EmailSettings:Port"] ?? "465");
+                var security = port == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
+
+                await client.ConnectAsync(_config["EmailSettings:Host"], port, security);
                 
-                // Authenticate with App Password
                 await client.AuthenticateAsync(_config["EmailSettings:Username"], _config["EmailSettings:Password"]);
                 
                 await client.SendAsync(emailMessage);

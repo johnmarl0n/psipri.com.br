@@ -39,7 +39,8 @@ namespace psipri.com.br.Controllers
             try
             {
                 // Send email to the psychologist
-                await _emailService.SendEmailAsync(_config["EmailSettings:Username"], subject, body);
+                string recipient = _config["EmailSettings:Recipient"] ?? _config["EmailSettings:Username"];
+                await _emailService.SendEmailAsync(recipient, subject, body);
                 
                 // Optional: Send auto-reply to the user
                 // await _emailService.SendEmailAsync(email, "Recebemos sua mensagem", "<p>Obrigada pelo contato. Em breve retornaremos.</p>");
