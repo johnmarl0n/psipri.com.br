@@ -49,10 +49,12 @@
             theme: 'snow',
             modules: {
                 toolbar: [
-                    [{ 'header': [1, 2, 3, false] }],
+                    [{ 'header': [1, 2, 3, false] }, { 'size': [] }],
                     ['bold', 'italic', 'underline', 'strike'],
-                    ['link', 'blockquote', 'code-block', 'image'],
+                    [{ 'color': [] }, { 'background': [] }],
                     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link', 'blockquote', 'image', 'video'],
                     ['clean']
                 ]
             }

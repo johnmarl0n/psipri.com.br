@@ -16,9 +16,9 @@ Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, pr
 
 ### Área Administrativa (Painel de Manutenção)
 - **Segurança Robusta:** Autenticação via ASP.NET Core Identity com proteção CSRF integrada.
-- **Gestão de Conteúdo:** Edição dinâmica da seção "Sobre" através de editor de texto rico (Quill.js).
-- **Gestão de Blog:** CRUD completo de postagens com publicação automática.
-- **Gestão de Mídia:** Upload simplificado da imagem principal (Hero) diretamente pelo painel.
+- **Gestão de Conteúdo:** Edição dinâmica da seção "Sobre" com suporte a cores, imagens, vídeos do YouTube e alinhamento via Quill.js.
+- **Gestão de Blog:** CRUD completo de postagens com suporte a conteúdo rico e multimídia.
+- **Visualização Responsiva:** Filtros de CSS customizados para garantir que imagens e vídeos inseridos sejam 100% responsivos no site público.
 - **Layout Profissional:** Dashboard clean e intuitivo para facilitar a manutenção diária.
 
 ## 🛠️ Tecnologias Utilizadas
