@@ -9,7 +9,7 @@ Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, pr
 
 ### Landing Page Pública
 - **Design Premium:** Estética inspirada em referências modernas de alta qualidade, com paleta de cores orgânica e tipografia sofisticada.
-- **SEO Otimizado:** Meta tags estruturadas para ranqueamento local (ex: Campinas e região).
+- **SEO Local de Alta Performance:** Cabeçalho `<h1>` e títulos semânticos otimizados para termos locais de busca ("Psicóloga Clínica e Jurídica em Campinas"), dados estruturados em JSON-LD (`ProfessionalService` do Schema.org) injetados para indexação rápida no Google Maps, e mapeamento técnico via arquivos `robots.txt` e `sitemap.xml`.
 - **Atuação Clínica:** Seção interativa em estilo acordeão para detalhamento de especialidades.
 - **Atendimento Online:** Seção dedicada explicando as vantagens e o funcionamento da psicoterapia remota.
 - **Blog Integrado:** Sistema de posts e "playbooks" para compartilhamento de conhecimento técnico.
@@ -33,6 +33,7 @@ Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, pr
 ## ⚙️ Melhorias de Estabilização e Produção
 
 Recentemente, o projeto passou por uma rodada de estabilização para garantir o funcionamento perfeito em servidores como **SmarterASP.NET**:
+- **Otimização de SEO Local:** Reestruturação semântica do título `<h1>` e textos na home page, geração automática de arquivos `robots.txt` e `sitemap.xml` para buscadores, e injeção de dados estruturados JSON-LD (`ProfessionalService` do Schema.org) para destaque local no Google Maps.
 - **Migração de Banco de Dados:** Banco totalmente migrado de SQLite para SQL Server, resolvendo problemas de gargalo de memória RAM e reciclagem de pool de aplicativos no ambiente IIS do SmarterASP.NET.
 - **Migrações Automáticas:** O sistema agora aplica migrações de banco de dados automaticamente ao iniciar no servidor, dispensando comandos manuais de terminal.
 - **Seeding de Segurança:** Garantia programática de que apenas o usuário administrador ("Priscila") exista, com remoção automática de contas não autorizadas e reset de senha via código.

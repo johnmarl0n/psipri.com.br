@@ -1,6 +1,6 @@
 @model IEnumerable<psipri.com.br.Models.BlogPost>
 @{
-    ViewData["Title"] = "Página Inicial";
+    ViewData["Title"] = "Dra. Priscila Batista";
 }
 
 <!-- Hero Section -->
@@ -8,9 +8,9 @@
     <div class="container">
         <div class="hero-grid">
             <div class="hero-text">
-                <span style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: var(--secondary-color); font-size: 0.9rem;">Psicóloga Clínica e Jurídica</span>
-                <h1>Saúde mental e ética técnica em um só lugar.</h1>
-                <p>Sou Priscila Batista, psicóloga em Campinas. Ofereço suporte clínico humanizado e perícia psicológica especializada para demandas judiciais.</p>
+                <span style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: var(--secondary-color); font-size: 0.9rem;">Psicoterapia & Perícia Psicológica</span>
+                <h1>Psicóloga Clínica e Jurídica em Campinas</h1>
+                <p>Sou Priscila Batista, psicóloga em Campinas. Ofereço suporte clínico humanizado (psicoterapia online e presencial) e perícia psicológica e assistência técnica especializada para demandas judiciais.</p>
                 <div class="hero-actions">
                     <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Priscila. Gostaria de receber informações sobre como funciona a psicoterapia online.")" target="_blank" class="btn btn-whatsapp">
                         <i class="fab fa-whatsapp"></i> Agendar Consulta Online
@@ -189,6 +189,47 @@
         </div>
     </div>
 </section>
+
+<!-- Schema.org JSON-LD Structured Data for Local SEO -->
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "ProfessionalService",
+  "name": "Dra. Priscila Batista - Psicologia Clínica e Jurídica em Campinas",
+  "image": "https://psipri.com.br/images/logo.svg",
+  "@@id": "https://psipri.com.br",
+  "url": "https://psipri.com.br",
+  "telephone": "+5519993364884",
+  "priceRange": "$$",
+  "address": {
+    "@@type": "PostalAddress",
+    "addressLocality": "Campinas",
+    "addressRegion": "SP",
+    "addressCountry": "BR"
+  },
+  "geo": {
+    "@@type": "GeoCoordinates",
+    "latitude": -22.9056,
+    "longitude": -47.0608
+  },
+  "openingHoursSpecification": {
+    "@@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday"
+    ],
+    "opens": "08:00",
+    "closes": "20:00"
+  },
+  "sameAs": [
+    "https://www.instagram.com/priscilapsi_/",
+    "https://www.linkedin.com/in/priscila-batista-3983211b2/"
+  ]
+}
+</script>
 
 @section Scripts {
     <script>

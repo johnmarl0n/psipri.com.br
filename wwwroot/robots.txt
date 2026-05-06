@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /Admin/
+Disallow: /Account/
+
+Sitemap: https://psipri.com.br/sitemap.xml
