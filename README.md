@@ -60,3 +60,8 @@ dotnet publish -c Release
 
 ---
 Desenvolvido por **John Dias** (johnmarl0n) para Dra. Priscila Batista.
+
+## 📄 Licença
+
+Este projeto é proprietário e não possui licença aberta de uso ou distribuição ("No License"). Todo o código e recursos associados são de uso exclusivo para a cliente designada, não sendo permitida a cópia, modificação, distribuição ou reutilização do mesmo. Para mais detalhes, consulte o arquivo [LICENSE](LICENSE).
+
