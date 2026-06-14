@@ -1,0 +1,82 @@
+@model IEnumerable<psipri.com.br.Models.PDM.PDMProducao>
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div>
+        <p style="color: var(--pdm-muted); margin: 0;">Acompanhe o histórico de lotes produzidos e a respectiva baixa de estoque de insumos.</p>
+    </div>
+    <div>
+        <a href="/Admin/PDM/Producao/Registrar" class="pdm-btn pdm-btn-primary">
+            <i class="fas fa-hammer"></i> Registrar Lote Produzido
+        </a>
+    </div>
+</div>
+
+<div class="pdm-card" style="padding: 0; overflow: hidden;">
+    <div class="pdm-table-container" style="border: none; border-radius: 0;">
+        <table class="pdm-table">
+            <thead>
+                <tr>
+                    <th>Data de Produção</th>
+                    <th>Receita (Vela)</th>
+                    <th style="text-align: right;">Lotes Produzidos</th>
+                    <th style="text-align: right;">Rendimento Total</th>
+                    <th style="text-align: right;">Custo Total do Lote</th>
+                    <th style="text-align: right;">Custo Unitário Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--pdm-muted);">
+                            <i class="fas fa-history" style="font-size: 3rem; margin-bottom: 15px; display: block; color: #cbd5e1;"></i>
+                            Nenhuma produção registrada ainda.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var producao in Model)
+                    {
+                        var totalVelas = producao.QuantidadeProduzida * (producao.Receita?.RendimentoUnidades ?? 1);
+                        var custoUnitario = totalVelas > 0 ? (producao.CustoTotalProducao / totalVelas) : 0;
+                        
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600; color: var(--pdm-dark);">@producao.DataProducao.ToString("dd/MM/yyyy")</div>
+                                <div style="font-size: 0.8rem; color: var(--pdm-muted);">@producao.DataProducao.ToString("HH:mm")</div>
+                            </td>
+                            <td>
+                                @if (producao.Receita != null)
+                                {
+                                    <a href="/Admin/PDM/Receita/Detalhe/@producao.ReceitaId" style="font-weight: 600; color: var(--pdm-primary-hover); text-decoration: none;">
+                                        @producao.Receita.Nome
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--pdm-muted); font-style: italic;">Receita Removida</span>
+                                }
+                            </td>
+                            <td style="text-align: right; font-weight: 600;">
+                                @producao.QuantidadeProduzida @(producao.QuantidadeProduzida == 1 ? "lote" : "lotes")
+                            </td>
+                            <td style="text-align: right; color: var(--pdm-muted);">
+                                @totalVelas unidades
+                            </td>
+                            <td style="text-align: right; font-weight: 700; color: var(--pdm-dark);">
+                                @producao.CustoTotalProducao.ToString("C2")
+                            </td>
+                            <td style="text-align: right; font-weight: 600; color: var(--pdm-primary-hover);">
+                                @custoUnitario.ToString("C2")
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

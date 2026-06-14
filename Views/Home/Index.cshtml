@@ -1,6 +1,6 @@
 @model IEnumerable<psipri.com.br.Models.BlogPost>
 @{
-    ViewData["Title"] = "Dra. Priscila Batista";
+    ViewData["Title"] = "Dra. Priscila Batista | Psicoterapia & Perícias";
 }
 
 <!-- Hero Section -->
@@ -8,56 +8,135 @@
     <div class="container">
         <div class="hero-grid">
             <div class="hero-text">
-                <span style="text-transform: uppercase; letter-spacing: 2px; font-weight: 600; color: var(--secondary-color); font-size: 0.9rem;">Psicoterapia & Perícia Psicológica</span>
-                <h1>Psicóloga Clínica e Jurídica em Campinas</h1>
-                <p>Sou Priscila Batista, psicóloga em Campinas. Ofereço suporte clínico humanizado (psicoterapia online e presencial) e perícia psicológica e assistência técnica especializada para demandas judiciais.</p>
-                <div class="hero-actions">
-                    <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Priscila. Gostaria de receber informações sobre como funciona a psicoterapia online.")" target="_blank" class="btn btn-whatsapp">
-                        <i class="fab fa-whatsapp"></i> Agendar Consulta Online
+                <span style="text-transform: uppercase; letter-spacing: 3px; font-weight: 700; color: var(--secondary-color); font-size: 0.85rem; display: block; margin-bottom: 15px;">Psicoterapia & Perícia Psicológica</span>
+                <h1>Acolhimento Humano e Rigor Técnico para o seu Bem-Estar</h1>
+                <p>Sou Priscila Batista, psicóloga clínica e jurídica. Ofereço um espaço seguro de escuta empática para superação de conflitos emocionais, além de assistência técnica especializada em demandas judiciais.</p>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Dra. Priscila. Gostaria de receber informações sobre como funciona o atendimento.")" target="_blank" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Agendar Consulta
+                    </a>
+                    <a href="#atuacao" class="btn btn-outline">
+                        Conhecer Atuação
                     </a>
                 </div>
             </div>
-            <div class="hero-image">
-                <img src="@(ViewBag.HeroImage ?? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800")" alt="Dra. Priscila Batista - Psicóloga em Campinas" />
+            <div class="hero-image-container">
+                <div class="hero-image-frame"></div>
+                <div class="hero-image">
+                    <img src="@(ViewBag.HeroImage ?? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800")" alt="Dra. Priscila Batista - Psicóloga em Campinas" />
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Atuação Clínica (Accordion) -->
+<!-- Diferenciais (Values Section) -->
+<section style="background-color: var(--white); padding: 80px 0;">
+    <div class="container">
+        <div class="values-grid">
+            <div class="value-card">
+                <span class="value-icon"><i class="fas fa-heart"></i></span>
+                <h4>Escuta Acolhedora</h4>
+                <p>Espaço livre de julgamentos, focado na empatia e no respeito absoluto pela sua história.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon"><i class="fas fa-microscope"></i></span>
+                <h4>Embasamento Científico</h4>
+                <p>Uso de práticas e metodologias psicológicas validadas cientificamente para resultados eficazes.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon"><i class="fas fa-user-shield"></i></span>
+                <h4>Sigilo Absoluto</h4>
+                <p>Garantia total de privacidade e confidencialidade profissional em todas as sessões.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon"><i class="fas fa-balance-scale"></i></span>
+                <h4>Rigor Jurídico</h4>
+                <p>Especialização técnica robusta para atuar como perita e assistente judicial com integridade.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Seção Interativa: Como se Sente Hoje? -->
+<section class="needs-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Como Posso Te Ajudar Hoje?</h2>
+            <p>Selecione a opção que melhor reflete a sua necessidade atual para receber orientações personalizadas.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: start;">
+            <!-- Selector Buttons (Left) -->
+            <div class="needs-selector-grid" style="grid-template-columns: 1fr;">
+                <button class="need-tag-btn active" data-need="ansiedade">
+                    <span><i class="fas fa-spinner" style="margin-right: 15px;"></i> Ansiedade ou Sobrecarga</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="need-tag-btn" data-need="relacionamento">
+                    <span><i class="fas fa-comments" style="margin-right: 15px;"></i> Problemas de Relacionamento</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="need-tag-btn" data-need="autocuidado">
+                    <span><i class="fas fa-compass" style="margin-right: 15px;"></i> Autoconhecimento & Mudança</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="need-tag-btn" data-need="juridico">
+                    <span><i class="fas fa-gavel" style="margin-right: 15px;"></i> Perícias & Assistência Técnica</span>
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <!-- Dynamic Response Block (Right) -->
+            <div class="need-response-container" id="needResponse">
+                <h3 class="serif need-response-title">Ansiedade ou Sobrecarga Emocional</h3>
+                <p class="need-response-text">
+                    Sentir o peito apertado, pensamentos acelerados e o peso de obrigações cotidianas constantes é um sinal de alerta do seu corpo. Na psicoterapia, trabalharemos juntos para identificar os gatilhos dessa sobrecarga, desenvolvendo recursos para acalmar a mente e restabelecer o equilíbrio e a paz interior.
+                </p>
+                <div>
+                    <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Dra. Priscila. Sinto muita ansiedade e sobrecarga, e gostaria de saber como a terapia pode me ajudar.")" target="_blank" class="btn btn-whatsapp" id="needCta">
+                        <i class="fab fa-whatsapp"></i> Conversar sobre Ansiedade
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Atuação Clínica & Perícias -->
 <section id="atuacao" style="background-color: var(--white);">
     <div class="container">
         <div class="section-title">
-            <h2>Atuação Clínica</h2>
-            <p>Conheça as principais áreas de atendimento e especialidades.</p>
+            <h2>Especialidades de Atendimento</h2>
+            <p>Conheça as frentes em que atuo de maneira ética, focando no desenvolvimento e na resolução de conflitos.</p>
         </div>
         
         <div class="accordion">
-            <div class="accordion-item">
+            <div class="accordion-item active">
                 <button class="accordion-header">
                     <span class="serif"><i class="fas fa-brain" style="margin-right: 15px; color: var(--secondary-color);"></i> Psicoterapia Individual</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="accordion-content">
-                    <p>Atendimento focado no autoconhecimento, resolução de conflitos internos e tratamento de transtornos como ansiedade e depressão. Um espaço seguro para explorar suas emoções e desenvolver novas perspectivas.</p>
+                    <p>Atendimento clínico estruturado para jovens e adultos. Focado na regulação emocional, ressignificação de traumas, tratamento da depressão, síndrome do pânico e burnout. Um ambiente confidencial para você se expressar livremente e construir caminhos mais saudáveis para sua vida.</p>
                 </div>
             </div>
             <div class="accordion-item">
                 <button class="accordion-header">
-                    <span class="serif"><i class="fas fa-gavel" style="margin-right: 15px; color: var(--secondary-color);"></i> Psicologia Jurídica</span>
+                    <span class="serif"><i class="fas fa-gavel" style="margin-right: 15px; color: var(--secondary-color);"></i> Assistência Técnica & Perícia Psicológica</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="accordion-content">
-                    <p>Atuação técnica em perícias judiciais, assistências técnicas e elaboração de laudos e pareceres. Especializada em casos que envolvem o sistema de justiça, garantindo rigor ético e técnico.</p>
+                    <p>Atuação especializada no âmbito judicial. Elaboração de pareceres técnicos, formulação de quesitos, acompanhamento em avaliações periciais e laudos psicológicos detalhados para disputas familiares (guarda, alienação parental) ou trabalhistas. Todo o processo é pautado no rigor ético do Conselho Federal de Psicologia.</p>
                 </div>
             </div>
             <div class="accordion-item">
                 <button class="accordion-header">
-                    <span class="serif"><i class="fas fa-users" style="margin-right: 15px; color: var(--secondary-color);"></i> Orientação Familiar</span>
+                    <span class="serif"><i class="fas fa-users" style="margin-right: 15px; color: var(--secondary-color);"></i> Conflitos Familiares & Mediação</span>
                     <i class="fas fa-chevron-down"></i>
                 </button>
                 <div class="accordion-content">
-                    <p>Suporte para famílias em momentos de transição ou conflito, auxiliando na comunicação e no fortalecimento dos vínculos afetivos.</p>
+                    <p>Suporte e aconselhamento para famílias que vivenciam separações, lutos ou crises profundas de convivência. O foco é restabelecer pontes de diálogo pacífico, protegendo o bem-estar psicológico de crianças e adolescentes envolvidos.</p>
                 </div>
             </div>
         </div>
@@ -67,32 +146,34 @@
 <!-- Atendimento Online Section -->
 <section id="online" style="background-color: var(--bg-creme);">
     <div class="container">
-        <div class="hero-grid" style="align-items: flex-start;">
+        <div class="hero-grid" style="align-items: center;">
             <div class="hero-text">
-                <h2 class="serif">Atendimento Online</h2>
-                <p>A psicoterapia online oferece a mesma eficácia do atendimento presencial, com benefícios exclusivos que se adaptam à sua rotina.</p>
+                <h2 class="serif" style="font-size: 3rem; margin-bottom: 20px;">Psicoterapia Online Sem Fronteiras</h2>
+                <p>Cuidado profissional de alto padrão onde quer que você esteja. O formato online garante flexibilidade sem abrir mão da proximidade e eficácia terapêutica.</p>
                 
-                <div class="online-advantages">
-                    <div style="margin-bottom: 30px;">
-                        <h4 class="serif" style="font-size: 1.4rem;"><i class="fas fa-clock" style="color: var(--secondary-color); margin-right: 15px;"></i> Praticidade e Conforto</h4>
-                        <p style="font-size: 1rem; color: var(--text-muted);">Economize tempo de deslocamento e realize suas sessões no conforto e privacidade do seu ambiente preferido.</p>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div style="display: flex; gap: 20px; align-items: flex-start;">
+                        <i class="fas fa-clock" style="color: var(--secondary-color); font-size: 1.4rem; margin-top: 5px;"></i>
+                        <div>
+                            <h5 style="margin: 0 0 5px; font-size: 1.1rem; font-weight: 700; color: var(--primary-color);">Conveniência de Agenda</h5>
+                            <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">Economize tempo com trânsito e encaixe as sessões facilmente no seu dia a dia profissional ou acadêmico.</p>
+                        </div>
                     </div>
-                    <div style="margin-bottom: 30px;">
-                        <h4 class="serif" style="font-size: 1.4rem;"><i class="fas fa-globe" style="color: var(--secondary-color); margin-right: 15px;"></i> Sem Barreiras Geográficas</h4>
-                        <p style="font-size: 1rem; color: var(--text-muted);">Acesse o suporte psicológico de qualquer lugar do mundo, mantendo a continuidade do tratamento mesmo em viagens.</p>
-                    </div>
-                    <div style="margin-bottom: 30px;">
-                        <h4 class="serif" style="font-size: 1.4rem;"><i class="fas fa-shield-alt" style="color: var(--secondary-color); margin-right: 15px;"></i> Segurança e Sigilo</h4>
-                        <p style="font-size: 1rem; color: var(--text-muted);">As sessões são realizadas via plataformas criptografadas que garantem o sigilo profissional absoluto.</p>
+                    <div style="display: flex; gap: 20px; align-items: flex-start;">
+                        <i class="fas fa-lock" style="color: var(--secondary-color); font-size: 1.4rem; margin-top: 5px;"></i>
+                        <div>
+                            <h5 style="margin: 0 0 5px; font-size: 1.1rem; font-weight: 700; color: var(--primary-color);">Criptografia & Sigilo</h5>
+                            <p style="margin: 0; font-size: 0.95rem; color: var(--text-muted);">As consultas são realizadas por chamadas de vídeo criptografadas, seguindo as diretrizes rígidas do CFP.</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div style="background: var(--white); padding: 40px; border-radius: 25px; box-shadow: var(--shadow-soft); border-left: 6px solid var(--secondary-color);">
-                <h3 class="serif">Como funciona?</h3>
-                <p>As sessões têm duração média de 50 minutos e são agendadas previamente. Você só precisa de uma conexão estável de internet e um local privativo.</p>
-                <div style="margin-top: 30px;">
-                    <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Priscila. Gostaria de receber informações sobre como funciona a psicoterapia online.")" target="_blank" class="btn btn-whatsapp">
-                        <i class="fab fa-whatsapp"></i> Tirar Dúvidas no WhatsApp
+            <div class="need-response-container" style="border-left-color: var(--primary-color);">
+                <h3 class="serif" style="margin-bottom: 15px;">Como funcionam as sessões?</h3>
+                <p style="font-size: 1rem; line-height: 1.7; color: var(--text-muted);">As consultas são individuais, duram cerca de 50 minutos e acontecem em plataformas como Zoom ou Google Meet. Você só precisará de uma conexão estável e de um local tranquilo e privativo.</p>
+                <div style="margin-top: 20px;">
+                    <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Dra. Priscila. Gostaria de entender melhor como funciona e os horários para atendimento online.")" target="_blank" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Tirar Dúvidas
                     </a>
                 </div>
             </div>
@@ -104,62 +185,111 @@
 <section id="blog" style="background-color: var(--white);">
     <div class="container">
         <div class="section-title">
-            <h2>Blog & Playbooks</h2>
-            <p>Conhecimento técnico e reflexões sobre psicologia e direito.</p>
+            <h2>Blog & Artigos</h2>
+            <p>Reflexões psicológicas e análises técnicas sobre a saúde mental e a psicologia no contexto jurídico.</p>
         </div>
 
         @if (Model != null && Model.Any())
         {
-            <div class="blog-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+            <div class="blog-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
                 @foreach (var post in Model)
                 {
-                    <article class="blog-card" style="background: var(--white); padding: 30px; border-radius: 20px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column;">
-                        <span style="font-size: 0.8rem; color: var(--secondary-color); font-weight: 600; margin-bottom: 10px;">@post.CreatedAt.ToString("dd MMM, yyyy")</span>
-                        <h3 class="serif" style="margin-bottom: 15px; min-height: 3em;">@post.Title</h3>
-                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; flex-grow: 1;">@post.Summary</p>
-                        <a asp-action="Post" asp-route-id="@post.Id" class="serif" style="text-decoration: none; color: var(--primary-color); font-weight: 700; border-bottom: 2px solid var(--secondary-color); align-self: flex-start;">Ler mais →</a>
+                    <article class="blog-card" style="display: flex; flex-direction: column;">
+                        <span style="font-size: 0.8rem; color: var(--secondary-color); font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">@post.CreatedAt.ToString("dd MMM, yyyy")</span>
+                        <h3 class="serif" style="margin-bottom: 15px; min-height: 2.5em; font-size: 1.6rem; line-height: 1.2;">@post.Title</h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; flex-grow: 1; line-height: 1.6;">@post.Summary</p>
+                        <a asp-action="Post" asp-route-id="@post.Id" class="serif" style="text-decoration: none; color: var(--primary-color); font-weight: 700; border-bottom: 2px solid var(--secondary-color); align-self: flex-start; padding-bottom: 2px; font-size: 1.05rem; transition: var(--transition-fast);">Ler artigo →</a>
                     </article>
                 }
             </div>
         }
         else
         {
-            <div style="text-align: center; padding: 40px; background: rgba(255,255,255,0.5); border-radius: 20px; border: 2px dashed #ccc;">
-                <p style="color: var(--text-muted); font-style: italic;">Novas postagens em breve. Acompanhe nossas atualizações!</p>
+            <div style="text-align: center; padding: 60px; background: var(--bg-creme-dark); border-radius: 20px; border: 1px dashed rgba(45,62,47,0.15);">
+                <p style="color: var(--text-muted); font-style: italic; margin: 0;">Novas publicações técnicas em breve. Acompanhe!</p>
             </div>
         }
     </div>
 </section>
 
 <!-- About Section (Dynamic) -->
-<section id="sobre" class="section-about" style="background-color: var(--bg-creme);">
+<section id="sobre" class="section-about">
     <div class="container">
-        <div class="section-title">
-            <h2>Sobre a Priscila</h2>
+        <div class="section-title" style="margin-bottom: 50px;">
+            <h2>Sobre a Profissional</h2>
         </div>
-        <div class="about-content" style="max-width: 850px; margin: 0 auto; text-align: center; font-size: 1.2rem;">
+        <div class="about-content" style="max-width: 900px; margin: 0 auto;">
             @Html.Raw(ViewBag.AboutContent)
         </div>
     </div>
 </section>
 
+<!-- FAQ Section -->
+<section style="background-color: var(--white);">
+    <div class="container">
+        <div class="section-title">
+            <h2>Perguntas Frequentes</h2>
+            <p>Esclareça suas principais dúvidas sobre o processo terapêutico e assistência técnica.</p>
+        </div>
+
+        <div class="accordion">
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span>Como é a primeira sessão de psicoterapia?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>A primeira sessão é um momento de acolhimento inicial. Serve para nos conhecermos, entender as suas principais angústias e traçar os objetivos iniciais para o processo clínico. Não se preocupe em saber "o que falar", eu conduzirei o diálogo com empatia e calma.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span>Você atende por convênio médico?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>Atendo de forma particular. No entanto, forneço nota fiscal completa com todos os dados técnicos necessários para que você solicite o reembolso integral ou parcial junto ao seu plano de saúde (Bradesco, SulAmérica, Amil, etc.), sob a modalidade de livre escolha.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span>Como funciona a atuação do assistente técnico judicial?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>Como assistente técnica, atuo em favor de uma das partes do processo (familiar, trabalhista ou civil). Realizo análise crítica do laudo do perito judicial, elaboro quesitos psicológicos norteadores, acompanho as avaliações quando permitido por lei e emito um parecer técnico final fundamentado cientificamente.</p>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    <span>Quanto tempo dura o tratamento psicoterápico?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="accordion-content">
+                    <p>O tempo de tratamento é subjetivo e varia conforme as demandas de cada paciente. A alta é decidida de forma conjunta entre terapeuta e paciente, à medida que os objetivos iniciais são alcançados e há melhora clínica perceptível na autonomia do indivíduo.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Contact Form Section -->
-<section id="contato" style="background: var(--white);">
+<section id="contato" style="background: var(--bg-creme-dark);">
     <div class="container" style="max-width: 850px;">
         <div class="section-title">
-            <h2>Vamos Conversar?</h2>
-            <p>Preencha os campos abaixo para entrar em contato.</p>
+            <h2>Dê o Primeiro Passo</h2>
+            <p>Se preferir, deixe seus dados e mensagem abaixo para que eu retorne o contato com toda a discrição.</p>
         </div>
 
         @if (TempData["MessageSent"] != null)
         {
-            <div class="alert alert-success" style="background: #d4edda; color: #155724; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+            <div class="alert alert-success" style="background: #e6f4ea; color: #137333; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center; font-weight: 500;">
                 @TempData["MessageSent"]
             </div>
         }
         @if (TempData["MessageError"] != null)
         {
-            <div class="alert alert-danger" style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 6px; margin-bottom: 20px; text-align: center;">
+            <div class="alert alert-danger" style="background: #fce8e6; color: #c5221f; padding: 15px; border-radius: 8px; margin-bottom: 25px; text-align: center; font-weight: 500;">
                 @TempData["MessageError"]
             </div>
         }
@@ -169,20 +299,20 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Seu Nome</label>
-                        <input type="text" name="name" class="form-control" placeholder="Ex: Maria Silva" required />
+                        <input type="text" name="name" class="form-control" placeholder="Ex: Maria Clara Silva" required />
                     </div>
                     <div class="form-group">
                         <label>Seu E-mail</label>
-                        <input type="email" name="email" class="form-control" placeholder="email@exemplo.com" required />
+                        <input type="email" name="email" class="form-control" placeholder="exemplo@email.com" required />
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom: 40px;">
                     <label>Como posso te ajudar?</label>
-                    <textarea name="message" class="form-control" rows="5" placeholder="Escreva aqui sua mensagem..." required></textarea>
+                    <textarea name="message" class="form-control" rows="5" placeholder="Sinta-se à vontade para resumir sua dúvida ou necessidade..." required></textarea>
                 </div>
                 <div style="text-align: center;">
-                    <button type="submit" class="btn btn-primary-site" style="padding: 18px 80px;">
-                        Enviar Mensagem via Site
+                    <button type="submit" class="btn btn-primary-site" style="padding: 18px 80px; font-size: 1.05rem;">
+                        Enviar Mensagem com Segurança
                     </button>
                 </div>
             </form>
@@ -233,12 +363,67 @@
 
 @section Scripts {
     <script>
+        // Interactive "Como se sente hoje" Logic
+        const needDetails = {
+            ansiedade: {
+                title: "Ansiedade ou Sobrecarga Emocional",
+                text: "Sentir o peito apertado, pensamentos acelerados e o peso de obrigações cotidianas constantes é um sinal de alerta do seu corpo. Na psicoterapia, trabalharemos juntos para identificar os gatilhos dessa sobrecarga, desenvolvendo recursos para acalmar a mente e restabelecer o equilíbrio e a paz interior.",
+                ctaText: "Conversar sobre Ansiedade",
+                ctaUrl: "https://wa.me/5519993364884?text=Olá Dra. Priscila. Sinto muita ansiedade e sobrecarga, e gostaria de saber como a terapia pode me ajudar."
+            },
+            relacionamento: {
+                title: "Dificuldades de Relacionamento",
+                text: "Conflitos frequentes com parceiros, desentendimentos familiares ou sentimentos de solidão minam nossa energia emocional. O atendimento clínico oferece um espaço de reflexão para compreender dinâmicas interpessoais, estabelecer limites saudáveis e restaurar canais de comunicação afetivos e eficientes.",
+                ctaText: "Conversar sobre Relacionamentos",
+                ctaUrl: "https://wa.me/5519993364884?text=Olá Dra. Priscila. Gostaria de saber mais sobre o atendimento para conflitos de relacionamento."
+            },
+            autocuidado: {
+                title: "Autoconhecimento & Mudança de Vida",
+                text: "Se você se sente perdido, sem rumo claro ou deseja mudar velhos hábitos que travam seu potencial, o processo de autoconhecimento é o caminho ideal. Vamos explorar juntos seus valores reais, romper crenças limitantes e definir escolhas alinhadas ao seu bem-estar profundo.",
+                ctaText: "Iniciar Processo de Autoconhecimento",
+                ctaUrl: "https://wa.me/5519993364884?text=Olá Dra. Priscila. Desejo iniciar meu processo de autoconhecimento na terapia."
+            },
+            juridico: {
+                title: "Perícias & Assistência Técnica Judicial",
+                text: "Processos judiciais complexos que envolvem disputas de guarda, alienação parental, assédio ou perícia por invalidez exigem acompanhamento técnico qualificado de um assistente de psicologia. Atuo na elaboração de quesitos específicos, análise de laudos e acompanhamento ético das perícias.",
+                ctaText: "Solicitar Assistência Técnica",
+                ctaUrl: "https://wa.me/5519993364884?text=Olá Dra. Priscila. Preciso de suporte especializado em perícia/assistência técnica judicial."
+            }
+        };
+
+        const buttons = document.querySelectorAll('.need-tag-btn');
+        const responseTitle = document.getElementById('needResponse').querySelector('.need-response-title');
+        const responseText = document.getElementById('needResponse').querySelector('.need-response-text');
+        const ctaBtn = document.getElementById('needCta');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                const need = btn.getAttribute('data-need');
+                const data = needDetails[need];
+
+                responseTitle.textContent = data.title;
+                responseText.textContent = data.text;
+                ctaBtn.innerHTML = `<i class="fab fa-whatsapp"></i> ${data.ctaText}`;
+                ctaBtn.setAttribute('href', data.ctaUrl);
+            });
+        });
+
+        // FAQ & Specialties Accordion toggler
         document.querySelectorAll('.accordion-header').forEach(header => {
             header.addEventListener('click', () => {
                 const item = header.parentElement;
                 const isActive = item.classList.contains('active');
-                document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
-                if (!isActive) item.classList.add('active');
+                
+                // Toggle siblings if they are active
+                const parent = item.parentElement;
+                parent.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
+                
+                if (!isActive) {
+                    item.classList.add('active');
+                }
             });
         });
     </script>

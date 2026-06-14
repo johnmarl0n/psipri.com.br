@@ -1,0 +1,176 @@
+@model psipri.com.br.Models.PDM.PDMReceita
+@using psipri.com.br.Models.PDM.Enums
+@{
+    Layout = "_LayoutPDM";
+    decimal margemOperacional = ViewBag.MargemOperacional;
+
+    // Calculate costs
+    decimal custoLote = Model.ReceitaItems?.Sum(ri => ri.Quantidade * (ri.Produto?.PrecoCusto ?? 0)) ?? 0;
+    decimal custoUnitario = Model.RendimentoUnidades > 0 ? (custoLote / Model.RendimentoUnidades) : 0;
+    decimal custoOperacionalUnitario = custoUnitario * (1 + margemOperacional / 100);
+    decimal precoVendaSugerido = custoOperacionalUnitario * (1 + Model.MargemLucro / 100);
+}
+
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <a href="/Admin/PDM/Receitas" class="pdm-btn pdm-btn-outline pdm-btn-sm">
+        <i class="fas fa-arrow-left"></i> Voltar às Receitas
+    </a>
+    
+    <div style="display: flex; gap: 10px;">
+        <a href="/Admin/PDM/Receita/Etiquetas/@Model.Id" class="pdm-btn pdm-btn-outline pdm-btn-sm" style="border-color: var(--pdm-primary); color: var(--pdm-primary-hover);">
+            <i class="fas fa-tag"></i> Gerar Etiquetas
+        </a>
+        <a href="/Admin/PDM/Producao/Registrar?receitaId=@Model.Id" class="pdm-btn pdm-btn-primary pdm-btn-sm" style="background-color: var(--pdm-success);">
+            <i class="fas fa-hammer"></i> Produzir Lote
+        </a>
+        <a href="/Admin/PDM/Receita/Editar/@Model.Id" class="pdm-btn pdm-btn-outline pdm-btn-sm">
+            <i class="fas fa-edit"></i> Editar Ficha
+        </a>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; align-items: start; margin-bottom: 40px;">
+    <!-- Left Column: Core Recipe Sheet -->
+    <div style="display: flex; flex-direction: column; gap: 30px;">
+        
+        <!-- Recipe Info Panel -->
+        <div class="pdm-card">
+            <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                @if (Model.ImagemThumb != null)
+                {
+                    <img src="/Admin/PDM/Receita/Imagem/@Model.Id" alt="@Model.Nome" style="width: 140px; height: 140px; border-radius: 16px; object-fit: cover; border: 1px solid var(--pdm-border);" />
+                }
+                <div style="flex: 1;">
+                    <h2 class="serif" style="margin: 0 0 10px; font-size: 2rem; color: var(--pdm-dark);">@Model.Nome</h2>
+                    <p style="color: var(--pdm-muted); font-size: 0.95rem; line-height: 1.6; margin: 0 0 15px;">
+                        @Model.Descricao
+                    </p>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <span class="pdm-badge pdm-badge-info">
+                            <i class="fas fa-spinner" style="margin-right: 6px;"></i> Rendimento: @Model.RendimentoUnidades @(Model.RendimentoUnidades == 1 ? "vela" : "velas")
+                        </span>
+                        <span class="pdm-badge pdm-badge-success">
+                            <i class="fas fa-calendar-alt" style="margin-right: 6px;"></i> Criado em @Model.CriadoEm.ToString("dd/MM/yyyy")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recipe Items List -->
+        <div class="pdm-card">
+            <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.5rem; color: var(--pdm-dark); display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-mortar-pestle" style="color: var(--pdm-primary);"></i> Matérias-primas e Quantidades
+            </h3>
+
+            <div class="pdm-table-container">
+                <table class="pdm-table">
+                    <thead>
+                        <tr>
+                            <th>Insumo</th>
+                            <th>Categoria</th>
+                            <th style="text-align: right;">Quantidade Necessária</th>
+                            <th style="text-align: right;">Custo Unitário</th>
+                            <th style="text-align: right;">Custo Proporcional</th>
+                            <th style="text-align: center;">Estoque Atual</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ReceitaItems)
+                        {
+                            var unitLabel = item.Produto?.UnidadeMedida switch
+                            {
+                                UnidadeMedida.KG => "kg",
+                                UnidadeMedida.ML => "ml",
+                                UnidadeMedida.UN => "un",
+                                UnidadeMedida.MT => "mt",
+                                _ => ""
+                            };
+                            var hasEnoughEstoque = item.Produto != null && item.Produto.QuantidadeEstoque >= item.Quantidade;
+                            
+                            <tr>
+                                <td>
+                                    <span style="font-weight: 600; color: var(--pdm-dark);">@item.Produto?.Nome</span>
+                                </td>
+                                <td>
+                                    <span style="font-size: 0.8rem; color: var(--pdm-muted);">@item.Produto?.Categoria?.Nome</span>
+                                </td>
+                                <td style="text-align: right; font-weight: 500;">
+                                    @item.Quantidade.ToString("N4") <span style="font-size: 0.8rem; color: var(--pdm-muted);">@unitLabel</span>
+                                </td>
+                                <td style="text-align: right; color: var(--pdm-muted);">
+                                    @((item.Produto?.PrecoCusto ?? 0).ToString("C2"))
+                                </td>
+                                <td style="text-align: right; font-weight: 600;">
+                                    @((item.Quantidade * (item.Produto?.PrecoCusto ?? 0)).ToString("C2"))
+                                </td>
+                                <td style="text-align: center;">
+                                    <span class="pdm-badge @(hasEnoughEstoque ? "pdm-badge-success" : "pdm-badge-danger")" style="font-size: 0.75rem;">
+                                        @(item.Produto?.QuantidadeEstoque.ToString("N3")) @unitLabel
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- How to Make Instructions -->
+        <div class="pdm-card">
+            <h3 class="serif" style="margin-top: 0; margin-bottom: 15px; font-size: 1.5rem; color: var(--pdm-dark); display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-book-open" style="color: var(--pdm-primary);"></i> Modo de Fazer / Instruções
+            </h3>
+            <p style="white-space: pre-line; line-height: 1.8; color: var(--pdm-text); font-size: 0.95rem;">
+                @(string.IsNullOrWhiteSpace(Model.Instrucoes) ? "Nenhuma instrução de preparo detalhada." : Model.Instrucoes)
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Right Column: Financial Breakdown -->
+    <div style="display: flex; flex-direction: column; gap: 30px;">
+        
+        <div class="pdm-card" style="background-color: #fdfaf3; border: 1px solid #fde68a;">
+            <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.5rem; color: #b45309; border-bottom: 1px solid #fde68a; padding-bottom: 10px;">
+                Custo e Margem
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--pdm-muted);">Custo do Lote:</span>
+                    <span style="font-weight: 600; color: var(--pdm-dark);">@custoLote.ToString("C2")</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--pdm-muted);">Rendimento do Lote:</span>
+                    <span style="font-weight: 600; color: var(--pdm-dark);">@Model.RendimentoUnidades velas</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px dashed var(--pdm-border); padding-bottom: 12px;">
+                    <span style="color: var(--pdm-muted);">Custo unitário insumo:</span>
+                    <span style="font-weight: 600; color: var(--pdm-dark);">@custoUnitario.ToString("C2")</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--pdm-muted);">Margem Operacional:</span>
+                    <span style="font-weight: 600; color: var(--pdm-dark);">@margemOperacional.ToString("N1")%</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; border-bottom: 1px dashed var(--pdm-border); padding-bottom: 12px;">
+                    <span style="color: var(--pdm-muted);">Custo unitário total:</span>
+                    <span style="font-weight: 600; color: var(--pdm-dark);">@custoOperacionalUnitario.ToString("C2")</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--pdm-muted);">Margem Lucro Desejada:</span>
+                    <span style="font-weight: 600; color: var(--pdm-dark);">@Model.MargemLucro.ToString("N1")%</span>
+                </div>
+
+                <div style="background-color: #fff; border-radius: 12px; padding: 15px; border: 1px solid #fde68a; display: flex; flex-direction: column; gap: 4px; align-items: center; margin-top: 10px;">
+                    <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--pdm-muted); font-weight: 700; letter-spacing: 0.5px;">Preço Sugerido Venda</span>
+                    <span style="font-size: 2rem; font-weight: 800; color: var(--pdm-primary-hover);">@precoVendaSugerido.ToString("C2")</span>
+                    <span style="font-size: 0.7rem; color: var(--pdm-muted); text-align: center; margin-top: 4px;">Preço unitário sugerido com base nas margens aplicadas.</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

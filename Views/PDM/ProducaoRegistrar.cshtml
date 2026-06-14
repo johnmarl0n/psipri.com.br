@@ -1,0 +1,56 @@
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div style="margin-bottom: 24px;">
+    <a href="/Admin/PDM/Producoes" class="pdm-btn pdm-btn-outline pdm-btn-sm">
+        <i class="fas fa-arrow-left"></i> Voltar ao Histórico
+    </a>
+</div>
+
+<div class="pdm-card" style="max-width: 600px; margin: 0 auto;">
+    <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.8rem; color: var(--pdm-dark);">
+        <i class="fas fa-hammer" style="color: var(--pdm-primary); margin-right: 8px;"></i> Registrar Produção
+    </h3>
+
+    <form action="/Admin/PDM/Producao/Registrar" method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- Recipe Select -->
+        <div class="pdm-form-group">
+            <label for="receitaId">Receita (Vela) *</label>
+            <select name="receitaId" class="pdm-form-control" id="receitaId" required>
+                <option value="">-- Selecione a Receita --</option>
+                @foreach (var rec in ViewBag.Receitas)
+                {
+                    <option value="@rec.Id" selected="@(ViewBag.SelectedReceitaId == rec.Id ? "selected" : null)">
+                        @rec.Nome (Rendimento Lote: @rec.RendimentoUnidades un)
+                    </option>
+                }
+            </select>
+        </div>
+
+        <!-- Quantity of Batches -->
+        <div class="pdm-form-group">
+            <label for="quantidadeLotes">Quantidade de Lotes *</label>
+            <input type="number" name="quantidadeLotes" class="pdm-form-control" id="quantidadeLotes" min="1" value="1" required />
+            <p style="font-size: 0.8rem; color: var(--pdm-muted); margin-top: 8px;">
+                Ex: Se a receita rende 5 velas e você produzir 2 lotes, o estoque deduzirá ingredientes para 10 velas e registrará a produção de 10 velas.
+            </p>
+        </div>
+
+        <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 15px; margin-bottom: 25px; display: flex; gap: 12px; align-items: flex-start;">
+            <i class="fas fa-exclamation-triangle" style="color: #d97706; margin-top: 2px;"></i>
+            <div style="font-size: 0.85rem; color: #92400e; line-height: 1.5;">
+                <strong>Atenção:</strong> Ao salvar, os insumos da receita serão automaticamente deduzidos do seu estoque. Esta ação não poderá ser desfeita automaticamente.
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; justify-content: flex-end;">
+            <a href="/Admin/PDM/Producoes" class="pdm-btn pdm-btn-outline">Cancelar</a>
+            <button type="submit" class="pdm-btn pdm-btn-primary">
+                <i class="fas fa-check"></i> Confirmar Produção
+            </button>
+        </div>
+    </form>
+</div>

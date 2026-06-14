@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Pingo de Mel 🕯️</title>
+    <link rel="icon" type="image/svg+xml" href="~/images/favicon-32x32.svg" asp-append-version="true" />
+    
+    <!-- CSS files -->
+    <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/pdm.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js for dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body style="margin: 0; background-color: var(--pdm-bg-creme);">
+
+    <div class="pdm-wrapper">
+        <!-- Sidebar -->
+        <aside class="pdm-sidebar">
+            <a href="/Admin/PDM" class="pdm-sidebar-logo" style="display: flex; flex-direction: column; align-items: center; padding: 20px 15px 15px; text-align: center; gap: 8px;">
+                <img src="~/images/logo_pingo_de_mel.png" alt="Pingo de Mel" style="width: 80px; height: 80px; object-fit: contain;" asp-append-version="true" />
+                <span style="font-size: 1.3rem; font-weight: 700; color: var(--pdm-dark); font-family: 'Cormorant Garamond', serif; letter-spacing: 0.5px;">Pingo de Mel</span>
+            </a>
+            
+            <nav class="pdm-sidebar-nav">
+                <ul class="pdm-sidebar-list">
+                    <li class="pdm-sidebar-item @(ViewData["ActivePage"]?.ToString() == "Dashboard" ? "active" : "")">
+                        <a href="/Admin/PDM">
+                            <i class="fas fa-chart-line"></i>
+                            Painel Principal
+                        </a>
+                    </li>
+                    <li class="pdm-sidebar-item @(ViewData["ActivePage"]?.ToString() == "Produtos" ? "active" : "")">
+                        <a href="/Admin/PDM/Produtos">
+                            <i class="fas fa-box"></i>
+                            Estoque Insumos
+                        </a>
+                    </li>
+                    <li class="pdm-sidebar-item @(ViewData["ActivePage"]?.ToString() == "Receitas" ? "active" : "")">
+                        <a href="/Admin/PDM/Receitas">
+                            <i class="fas fa-mortar-pestle"></i>
+                            Receitas Velas
+                        </a>
+                    </li>
+                    <li class="pdm-sidebar-item @(ViewData["ActivePage"]?.ToString() == "Producoes" ? "active" : "")">
+                        <a href="/Admin/PDM/Producoes">
+                            <i class="fas fa-industry"></i>
+                            Produções
+                        </a>
+                    </li>
+                    <li class="pdm-sidebar-item @(ViewData["ActivePage"]?.ToString() == "Vendas" ? "active" : "")">
+                        <a href="/Admin/PDM/Vendas">
+                            <i class="fas fa-cash-register"></i>
+                            Controle Vendas
+                        </a>
+                    </li>
+                    <li class="pdm-sidebar-item @(ViewData["ActivePage"]?.ToString() == "Clientes" ? "active" : "")">
+                        <a href="/Admin/PDM/Clientes">
+                            <i class="fas fa-users"></i>
+                            Clientes
+                        </a>
+                    </li>
+                    <li class="pdm-sidebar-item @(ViewData["ActivePage"]?.ToString() == "Fechamentos" ? "active" : "")">
+                        <a href="/Admin/PDM/Fechamentos">
+                            <i class="fas fa-history"></i>
+                            Fechamentos
+                        </a>
+                    </li>
+                    <li class="pdm-sidebar-item @(ViewData["ActivePage"]?.ToString() == "Configuracoes" ? "active" : "")">
+                        <a href="/Admin/PDM/Configuracoes">
+                            <i class="fas fa-sliders-h"></i>
+                            Configurações
+                        </a>
+                    </li>
+                    
+                    <!-- Divider -->
+                    <li style="height: 1px; background-color: var(--pdm-border); margin: 15px 0;"></li>
+                    
+                    <li class="pdm-sidebar-item">
+                        <a href="/Admin">
+                            <i class="fas fa-arrow-left"></i>
+                            Voltar ao Blog
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="pdm-sidebar-footer">
+                &copy; @DateTime.Now.Year - Pingo de Mel 🕯️
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="pdm-content">
+            <header class="pdm-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="pdm-hamburger">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 class="serif">@ViewData["Title"]</h1>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 0.9rem; color: var(--pdm-muted);">Priscila Batista</span>
+                    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="pdm-btn pdm-btn-outline pdm-btn-sm" style="color: #e74c3c; border-color: rgba(231, 76, 60, 0.2);">
+                            Sair
+                        </button>
+                    </form>
+                </div>
+            </header>
+
+            <main role="main">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="pdm-alert-box pdm-alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <div>@TempData["Success"]</div>
+                    </div>
+                }
+                @if (TempData["Error"] != null)
+                {
+                    <div class="pdm-alert-box pdm-alert-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div>@TempData["Error"]</div>
+                    </div>
+                }
+                
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/js/site.min.js" asp-append-version="true"></script>
+    <script src="~/js/pdm.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

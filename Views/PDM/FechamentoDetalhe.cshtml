@@ -1,0 +1,69 @@
+@model psipri.com.br.Models.PDM.PDMFechamento
+@using psipri.com.br.Models.PDM.Enums
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <a href="/Admin/PDM/Fechamentos" class="pdm-btn pdm-btn-outline pdm-btn-sm">
+        <i class="fas fa-arrow-left"></i> Voltar à Lista
+    </a>
+    
+    <div style="text-align: right;">
+        <span style="font-size: 0.85rem; color: var(--pdm-muted);">Valor Total do Estoque Fechado:</span>
+        <strong style="font-size: 1.4rem; color: var(--pdm-primary-hover); display: block; margin-top: 2px;">@Model.ValorTotalEstoque.ToString("C2")</strong>
+    </div>
+</div>
+
+<div class="pdm-card" style="padding: 0; overflow: hidden; margin-bottom: 40px;">
+    <div style="padding: 20px 24px; border-bottom: 1px solid var(--pdm-border); background-color: #fafaf9;">
+        <h3 class="serif" style="margin: 0; color: var(--pdm-dark); font-size: 1.4rem;">
+            Posição Gravada em @Model.DataFechamento.ToString("dd/MM/yyyy 'às' HH:mm")
+        </h3>
+    </div>
+    
+    <div class="pdm-table-container" style="border: none; border-radius: 0;">
+        <table class="pdm-table">
+            <thead>
+                <tr>
+                    <th>Insumo</th>
+                    <th>Categoria</th>
+                    <th style="text-align: right;">Quantidade Gravada</th>
+                    <th style="text-align: right;">Custo Unitário (Época)</th>
+                    <th style="text-align: right;">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.FechamentoItems)
+                {
+                    var unitLabel = item.Produto?.UnidadeMedida switch
+                    {
+                        UnidadeMedida.KG => "kg",
+                        UnidadeMedida.ML => "ml",
+                        UnidadeMedida.UN => "un",
+                        UnidadeMedida.MT => "mt",
+                        _ => ""
+                    };
+                    
+                    <tr>
+                        <td>
+                            <span style="font-weight: 600; color: var(--pdm-dark);">@(item.Produto?.Nome ?? "Produto Excluído")</span>
+                        </td>
+                        <td>
+                            <span style="font-size: 0.8rem; color: var(--pdm-muted);">@(item.Produto?.Categoria?.Nome ?? "-")</span>
+                        </td>
+                        <td style="text-align: right; font-weight: 500;">
+                            @item.QuantidadeEstoque.ToString("N3") <span style="font-size: 0.8rem; color: var(--pdm-muted);">@unitLabel</span>
+                        </td>
+                        <td style="text-align: right; color: var(--pdm-muted);">
+                            @item.PrecoCusto.ToString("C2")
+                        </td>
+                        <td style="text-align: right; font-weight: 600; color: var(--pdm-dark);">
+                            @item.ValorTotal.ToString("C2")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -10,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Register Email Service
 builder.Services.AddTransient<IEmailService, EmailService>();
 
+// Register Pingo de Mel Stock Closing Background Job
+builder.Services.AddHostedService<PDMStockClosingJob>();
+
 // Configure Database connection (SQL Server)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -85,6 +88,20 @@ using (var scope = app.Services.CreateScope())
         {
             await userManager.DeleteAsync(user);
         }
+
+        // Update HeroImage to the new profile photo
+        var heroSetting = await context.SiteContents.FirstOrDefaultAsync(c => c.Key == "HeroImage");
+        if (heroSetting == null)
+        {
+            heroSetting = new psipri.com.br.Models.SiteContent { Key = "HeroImage", Value = "/uploads/hero_priscila.jpg" };
+            context.SiteContents.Add(heroSetting);
+        }
+        else
+        {
+            heroSetting.Value = "/uploads/hero_priscila.jpg";
+            context.SiteContents.Update(heroSetting);
+        }
+        await context.SaveChangesAsync();
     }
     catch (Exception ex)
     {

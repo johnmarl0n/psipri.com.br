@@ -1,0 +1,103 @@
+@model IEnumerable<psipri.com.br.Models.PDM.PDMReceita>
+@{
+    Layout = "_LayoutPDM";
+    decimal margemOperacional = ViewBag.MargemOperacional;
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div>
+        <p style="color: var(--pdm-muted); margin: 0;">Fichas técnicas e fórmulas de produção de suas velas artesanais.</p>
+    </div>
+    <div style="display: flex; gap: 12px;">
+        <a href="/Admin/PDM/Receita/Criar" class="pdm-btn pdm-btn-primary">
+            <i class="fas fa-plus"></i> Nova Receita
+        </a>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
+    @if (!Model.Any())
+    {
+        <div class="pdm-card" style="grid-column: 1 / -1; text-align: center; padding: 60px; color: var(--pdm-muted);">
+            <i class="fas fa-mortar-pestle" style="font-size: 4rem; margin-bottom: 15px; display: block; color: #cbd5e1;"></i>
+            Nenhuma receita cadastrada ainda. Comece criando uma nova receita de vela!
+        </div>
+    }
+    else
+    {
+        @foreach (var receita in Model)
+        {
+            // Calculate costs
+            decimal custoLote = receita.ReceitaItems?.Sum(ri => ri.Quantidade * (ri.Produto?.PrecoCusto ?? 0)) ?? 0;
+            decimal custoUnitario = receita.RendimentoUnidades > 0 ? (custoLote / receita.RendimentoUnidades) : 0;
+            decimal custoOperacionalUnitario = custoUnitario * (1 + margemOperacional / 100);
+            decimal precoVendaSugerido = custoOperacionalUnitario * (1 + receita.MargemLucro / 100);
+            
+            <div class="pdm-card" style="display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; padding: 0;">
+                <!-- Card Header Image/Color -->
+                @if (receita.ImagemThumb != null)
+                {
+                    <div style="height: 180px; position: relative;">
+                        <img src="/Admin/PDM/Receita/Imagem/@receita.Id" alt="@receita.Nome" style="width: 100%; height: 100%; object-fit: cover;" />
+                        <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600;">
+                            Rende @receita.RendimentoUnidades @(receita.RendimentoUnidades == 1 ? "unidade" : "unidades")
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div style="height: 120px; background: linear-gradient(135deg, #fef3c7, #fde68a); display: flex; align-items: center; justify-content: center; position: relative;">
+                        <i class="fas fa-fire-alt" style="font-size: 3rem; color: var(--pdm-primary); opacity: 0.4;"></i>
+                        <div style="position: absolute; bottom: 10px; right: 10px; background: rgba(217, 119, 6, 0.1); color: var(--pdm-primary-hover); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;">
+                            Rende @receita.RendimentoUnidades @(receita.RendimentoUnidades == 1 ? "un" : "uns")
+                        </div>
+                    </div>
+                }
+
+                <!-- Card Body -->
+                <div style="padding: 24px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h3 class="serif" style="margin: 0 0 8px; font-size: 1.6rem; color: var(--pdm-dark);">@receita.Nome</h3>
+                        <p style="font-size: 0.85rem; color: var(--pdm-muted); line-height: 1.5; margin-bottom: 20px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 38px;">
+                            @receita.Descricao
+                        </p>
+
+                        <!-- Cost breakdowns -->
+                        <div style="background-color: #fafaf9; border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                <span style="color: var(--pdm-muted);">Custo Ingredientes (Lote):</span>
+                                <span style="font-weight: 600;">@custoLote.ToString("C2")</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                                <span style="color: var(--pdm-muted);">Custo Unitário:</span>
+                                <span style="font-weight: 600;">@custoUnitario.ToString("C2")</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; border-top: 1px dashed var(--pdm-border); padding-top: 8px; margin-top: 4px;">
+                                <span style="color: var(--pdm-dark); font-weight: 600;">Preço Unit. Sugerido:</span>
+                                <span style="font-weight: 700; color: var(--pdm-primary-hover);">@precoVendaSugerido.ToString("C2")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Actions -->
+                    <div style="display: flex; gap: 10px; border-top: 1px solid var(--pdm-border); padding-top: 15px; margin-top: auto;">
+                        <a href="/Admin/PDM/Receita/Detalhe/@receita.Id" class="pdm-btn pdm-btn-secondary pdm-btn-sm" style="flex: 1;">
+                            <i class="fas fa-file-invoice"></i> Ver Ficha
+                        </a>
+                        
+                        <a href="/Admin/PDM/Receita/Editar/@receita.Id" class="pdm-btn pdm-btn-outline pdm-btn-sm" style="padding: 8px 12px;" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <form action="/Admin/PDM/Receita/Excluir/@receita.Id" method="post" onsubmit="return confirm('Deseja realmente excluir esta receita?');" style="display: inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="pdm-btn pdm-btn-danger pdm-btn-sm" style="padding: 8px 12px;" title="Excluir">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

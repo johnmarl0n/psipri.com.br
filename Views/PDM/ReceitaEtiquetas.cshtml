@@ -1,0 +1,380 @@
+@model psipri.com.br.Models.PDM.PDMReceita
+@{
+    Layout = "_LayoutPDM";
+    var defaultIngredients = string.Join(", ", Model.ReceitaItems?.Select(ri => ri.Produto?.Nome) ?? new List<string>());
+}
+
+<style>
+    /* Custom Styling for Label Customizer */
+    .etiquetas-container {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 30px;
+        align-items: start;
+    }
+
+    .sidebar-controls {
+        background: var(--pdm-white);
+        border: 1px solid var(--pdm-border);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: var(--pdm-shadow);
+    }
+
+    /* Print Preview sheet */
+    .preview-sheet {
+        background: #f1f5f9;
+        border-radius: 20px;
+        padding: 40px;
+        display: flex;
+        justify-content: center;
+        min-height: 600px;
+        border: 1px dashed #cbd5e1;
+    }
+
+    .sheet-a4 {
+        background: white;
+        width: 210mm;
+        min-height: 297mm;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        padding: 15mm;
+        box-sizing: border-box;
+        border-radius: 4px;
+        position: relative;
+    }
+
+    /* Label Layouts */
+    .labels-grid {
+        display: grid;
+        gap: 10mm;
+        justify-content: center;
+        align-content: start;
+    }
+
+    /* Grid layout configurations */
+    .grid-small {
+        grid-template-columns: repeat(3, 50mm);
+        grid-auto-rows: 50mm;
+    }
+
+    .grid-medium {
+        grid-template-columns: repeat(2, 75mm);
+        grid-auto-rows: 75mm;
+    }
+
+    .grid-thermal {
+        grid-template-columns: repeat(1, 80mm);
+        grid-auto-rows: 80mm;
+        width: 80mm;
+        padding: 0;
+        margin: 0 auto;
+    }
+
+    /* The individual label design */
+    .pdm-label-card {
+        border: 1px solid #d97706; /* Golden Amber border */
+        border-radius: 8px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background: #fffdf9;
+        position: relative;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .label-small {
+        padding: 4mm;
+        font-size: 8px;
+    }
+
+    .label-medium {
+        padding: 6mm;
+        font-size: 11px;
+    }
+
+    .label-thermal {
+        padding: 6mm;
+        font-size: 11px;
+        border-color: #000000;
+        background: #ffffff;
+        border-radius: 0;
+    }
+
+    .label-logo {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+        margin-bottom: 2mm;
+    }
+
+    .label-medium .label-logo, .label-thermal .label-logo {
+        width: 48px;
+        height: 48px;
+    }
+
+    .label-title {
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 1mm 0;
+        line-height: 1.1;
+    }
+
+    .label-small .label-title { font-size: 11px; }
+    .label-medium .label-title, .label-thermal .label-title { font-size: 18px; }
+
+    .label-subtitle {
+        text-transform: uppercase;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        color: #b45309;
+        margin: 0 0 2mm 0;
+    }
+
+    .label-small .label-subtitle { font-size: 6px; }
+    .label-medium .label-subtitle, .label-thermal .label-subtitle { font-size: 8px; }
+
+    .label-divider {
+        width: 40%;
+        height: 1px;
+        background-color: rgba(217, 119, 6, 0.3);
+        margin: 1mm auto 2mm auto;
+    }
+
+    .label-ingredients {
+        color: #475569;
+        font-style: italic;
+        margin-bottom: 2mm;
+        line-height: 1.2;
+    }
+
+    .label-small .label-ingredients { font-size: 6px; }
+    .label-medium .label-ingredients, .label-thermal .label-ingredients { font-size: 8.5px; }
+
+    .label-warning {
+        font-size: 5px;
+        color: #64748b;
+        border-top: 1px dashed #e2e8f0;
+        padding-top: 1mm;
+        margin-top: auto;
+        line-height: 1.1;
+    }
+
+    .label-medium .label-warning, .label-thermal .label-warning {
+        font-size: 7px;
+    }
+
+    .label-weight {
+        font-weight: 700;
+        color: #1e293b;
+        margin-top: 1mm;
+    }
+    .label-small .label-weight { font-size: 7px; }
+    .label-medium .label-weight, .label-thermal .label-weight { font-size: 10px; }
+
+    /* ==========================================================================
+       PRINT STYLES
+       ========================================================================== */
+    @@media print {
+        /* Hide everything else */
+        body {
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .pdm-sidebar, .pdm-header, .no-print, .sidebar-controls {
+            display: none !important;
+        }
+
+        .pdm-content {
+            margin-left: 0 !important;
+            padding: 0 !important;
+        }
+
+        .preview-sheet {
+            background: white !important;
+            padding: 0 !important;
+            border: none !important;
+            min-height: auto !important;
+        }
+
+        .sheet-a4 {
+            box-shadow: none !important;
+            width: 210mm !important;
+            height: 297mm !important;
+            padding: 10mm !important;
+            margin: 0 !important;
+            page-break-after: always;
+        }
+
+        /* For single thermal rolls, page size is automatic/small */
+        .sheet-thermal {
+            width: 80mm !important;
+            height: auto !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .pdm-label-card {
+            page-break-inside: avoid;
+        }
+
+        @@page {
+            margin: 0;
+        }
+    }
+</style>
+
+<div class="no-print" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+    <a href="/Admin/PDM/Receita/Detalhe/@Model.Id" class="pdm-btn pdm-btn-outline pdm-btn-sm">
+        <i class="fas fa-arrow-left"></i> Voltar à Receita
+    </a>
+    <button onclick="window.print();" class="pdm-btn pdm-btn-primary">
+        <i class="fas fa-print"></i> Imprimir Etiquetas / Gerar PDF
+    </button>
+</div>
+
+<div class="etiquetas-container">
+    <!-- Configuration panel -->
+    <div class="sidebar-controls no-print">
+        <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.3rem;">Personalizar Etiqueta</h3>
+
+        <div class="pdm-form-group">
+            <label for="labelSize">Modelo de Etiqueta</label>
+            <select id="labelSize" class="pdm-form-control">
+                <option value="medium" selected>Média Quadrada (7.5x7.5 cm - A4)</option>
+                <option value="small">Pequena Quadrada (5.0x5.0 cm - A4)</option>
+                <option value="thermal">Bobina Térmica (80x80 mm)</option>
+            </select>
+        </div>
+
+        <div class="pdm-form-group">
+            <label for="labelQty">Quantidade de Etiquetas</label>
+            <input type="number" id="labelQty" class="pdm-form-control" min="1" max="24" value="6" />
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--pdm-border); margin: 20px 0;" />
+
+        <div class="pdm-form-group">
+            <label for="txtTitle">Título da Vela</label>
+            <input type="text" id="txtTitle" class="pdm-form-control" value="@Model.Nome" />
+        </div>
+
+        <div class="pdm-form-group">
+            <label for="txtSubtitle">Subtítulo</label>
+            <input type="text" id="txtSubtitle" class="pdm-form-control" value="Vela Aromática Artesanal" />
+        </div>
+
+        <div class="pdm-form-group">
+            <label for="txtWeight">Peso / Volume</label>
+            <input type="text" id="txtWeight" class="pdm-form-control" value="150g" placeholder="Ex: 150g, 200ml" />
+        </div>
+
+        <div class="pdm-form-group">
+            <label for="txtIngredients">Ingredientes / Composição</label>
+            <textarea id="txtIngredients" class="pdm-form-control" rows="3" style="resize: vertical;">Cera de coco, @defaultIngredients, essência premium, pavio de algodão.</textarea>
+        </div>
+
+        <div class="pdm-form-group">
+            <label for="txtWarning">Precauções e Instruções</label>
+            <textarea id="txtWarning" class="pdm-form-control" rows="3" style="resize: vertical;">Instruções: Não queime sem supervisão. Mantenha longe de objetos inflamáveis, crianças e animais. Apare o pavio em 5mm antes de reacender.</textarea>
+        </div>
+    </div>
+
+    <!-- Sheet preview area -->
+    <div class="preview-sheet">
+        <div class="sheet-a4" id="sheetLayout">
+            <div class="labels-grid grid-medium" id="labelsGrid">
+                <!-- Labels dynamic injection -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const labelSize = document.getElementById("labelSize");
+            const labelQty = document.getElementById("labelQty");
+            const txtTitle = document.getElementById("txtTitle");
+            const txtSubtitle = document.getElementById("txtSubtitle");
+            const txtWeight = document.getElementById("txtWeight");
+            const txtIngredients = document.getElementById("txtIngredients");
+            const txtWarning = document.getElementById("txtWarning");
+            
+            const labelsGrid = document.getElementById("labelsGrid");
+            const sheetLayout = document.getElementById("sheetLayout");
+
+            function updateLabels() {
+                const size = labelSize.value;
+                const qty = parseInt(labelQty.value) || 1;
+                
+                // Adjust Grid layout class
+                labelsGrid.className = "labels-grid";
+                sheetLayout.className = "sheet-a4";
+                
+                if (size === "small") {
+                    labelsGrid.classList.add("grid-small");
+                } else if (size === "medium") {
+                    labelsGrid.classList.add("grid-medium");
+                } else if (size === "thermal") {
+                    labelsGrid.classList.add("grid-thermal");
+                    sheetLayout.className = "sheet-a4 sheet-thermal";
+                }
+
+                // Generate labels
+                labelsGrid.innerHTML = "";
+                for (let i = 0; i < qty; i++) {
+                    const labelDiv = document.createElement("div");
+                    labelDiv.className = `pdm-label-card label-${size}`;
+                    
+                    labelDiv.innerHTML = `
+                        <img src="/images/logo_pingo_de_mel.png" alt="Logo" class="label-logo" />
+                        <h4 class="label-title">${escapeHtml(txtTitle.value)}</h4>
+                        <span class="label-subtitle">${escapeHtml(txtSubtitle.value)}</span>
+                        <div class="label-divider"></div>
+                        <p class="label-ingredients">${escapeHtml(txtIngredients.value)}</p>
+                        <span class="label-weight">${escapeHtml(txtWeight.value)}</span>
+                        <div class="label-warning">${escapeHtml(txtWarning.value)}</div>
+                    `;
+                    
+                    labelsGrid.appendChild(labelDiv);
+                }
+            }
+
+            function escapeHtml(text) {
+                return text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            // Bind listeners
+            [labelSize, labelQty, txtTitle, txtSubtitle, txtWeight, txtIngredients, txtWarning].forEach(el => {
+                el.addEventListener("input", updateLabels);
+            });
+
+            labelSize.addEventListener("change", () => {
+                // Adjust quantity defaults based on layout to fill the page nicely
+                if (labelSize.value === "small") {
+                    labelQty.value = "12";
+                } else if (labelSize.value === "medium") {
+                    labelQty.value = "6";
+                } else if (labelSize.value === "thermal") {
+                    labelQty.value = "1";
+                }
+                updateLabels();
+            });
+
+            // Initial render
+            updateLabels();
+        });
+    </script>
+}

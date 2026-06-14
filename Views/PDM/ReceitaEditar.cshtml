@@ -1,0 +1,319 @@
+@model psipri.com.br.Models.PDM.PDMReceita
+@using psipri.com.br.Models.PDM.Enums
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div style="margin-bottom: 24px;">
+    <a href="/Admin/PDM/Receitas" class="pdm-btn pdm-btn-outline pdm-btn-sm">
+        <i class="fas fa-arrow-left"></i> Voltar às Receitas
+    </a>
+</div>
+
+<div class="pdm-card" style="max-width: 900px; margin: 0 auto 50px;">
+    <form action="/Admin/PDM/Receita/Editar/@Model.Id" method="post" enctype="multipart/form-data" id="recipeForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-bottom: 30px;">
+            <!-- Left col: Image -->
+            <div style="flex: 1; min-width: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-right: 1px solid var(--pdm-border); padding-right: 30px;">
+                <label style="font-weight: 600; font-size: 0.9rem; margin-bottom: 12px; color: var(--pdm-dark);">Imagem da Vela</label>
+                
+                <div class="pdm-image-preview-container" onclick="document.getElementById('imageFileInput').click()">
+                    @if (Model.ImagemThumb != null)
+                    {
+                        <img id="previewImage" src="/Admin/PDM/Receita/Imagem/@Model.Id" />
+                        <div id="previewPlaceholder" class="pdm-image-preview-placeholder" style="display: none;">
+                            <i class="fas fa-image"></i>
+                            <span>Escolher Foto<br/><small>(Opcional)</small></span>
+                        </div>
+                    }
+                    else
+                    {
+                        <img id="previewImage" style="display: none;" />
+                        <div id="previewPlaceholder" class="pdm-image-preview-placeholder">
+                            <i class="fas fa-image"></i>
+                            <span>Escolher Foto<br/><small>(Opcional)</small></span>
+                        </div>
+                    }
+                </div>
+                
+                <input type="file" name="imagemFile" id="imageFileInput" style="display: none;" accept="image/*" />
+                
+                @if (Model.ImagemThumb != null)
+                {
+                    <div style="margin-top: 15px; display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="removerImagem" id="removerImagem" value="true" />
+                        <label for="removerImagem" style="font-size: 0.8rem; color: var(--pdm-danger); font-weight: 600; cursor: pointer;">Excluir foto atual</label>
+                    </div>
+                }
+            </div>
+
+            <!-- Right col: Name, Description -->
+            <div style="flex: 2; min-width: 300px;">
+                <div class="pdm-form-group">
+                    <label for="Nome">Nome da Receita *</label>
+                    <input asp-for="Nome" class="pdm-form-control" id="Nome" placeholder="Ex: Vela Aromática de Lavanda P" required />
+                    <span asp-validation-for="Nome" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+                </div>
+
+                <div class="pdm-form-group">
+                    <label for="Descricao">Breve Descrição</label>
+                    <textarea asp-for="Descricao" class="pdm-form-control" id="Descricao" rows="2" placeholder="Ex: Vela no copo de vidro 100g, aroma floral relaxante."></textarea>
+                    <span asp-validation-for="Descricao" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--pdm-border); margin: 30px 0;" />
+
+        <!-- Ingredients Table (Dynamic Row Addition) -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 class="serif" style="margin: 0; color: var(--pdm-dark); font-size: 1.5rem;">Ingredientes / Composição</h3>
+            <button type="button" class="pdm-btn pdm-btn-secondary pdm-btn-sm" id="btnAddIngredient">
+                <i class="fas fa-plus"></i> Adicionar Insumo
+            </button>
+        </div>
+
+        <div class="pdm-table-container" style="margin-bottom: 30px;">
+            <table class="pdm-table" id="ingredientsTable">
+                <thead>
+                    <tr>
+                        <th>Produto (Insumo)</th>
+                        <th style="width: 150px;">Quantidade</th>
+                        <th style="width: 120px;">Unidade</th>
+                        <th style="width: 150px; text-align: right;">Custo Proporcional</th>
+                        <th style="width: 80px; text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="ingredientsList">
+                    @if (Model.ReceitaItems != null)
+                    {
+                        foreach (var item in Model.ReceitaItems)
+                        {
+                            var unitLabel = item.Produto?.UnidadeMedida switch
+                            {
+                                UnidadeMedida.KG => "kg",
+                                UnidadeMedida.ML => "ml",
+                                UnidadeMedida.UN => "un",
+                                UnidadeMedida.MT => "mt",
+                                _ => "-"
+                            };
+                            
+                            <tr>
+                                <td>
+                                    <select name="produtoIds" class="pdm-form-control select-insumo" required>
+                                        <option value="">-- Selecione o Insumo --</option>
+                                        @foreach (var prod in ViewBag.Produtos)
+                                        {
+                                            <option value="@prod.Id" selected="@(prod.Id == item.ProdutoId ? "selected" : null)">@prod.Nome</option>
+                                        }
+                                    </select>
+                                </td>
+                                <td>
+                                    <input name="quantidades" type="number" step="0.0001" class="pdm-form-control input-qty" value="@item.Quantidade.ToString("F4").Replace(",", ".")" min="0.0001" required />
+                                </td>
+                                <td>
+                                    <span class="pdm-badge pdm-badge-info badge-unidade">@unitLabel</span>
+                                </td>
+                                <td style="text-align: right; font-weight: 600;" class="col-custo">
+                                    @((item.Quantidade * (item.Produto?.PrecoCusto ?? 0)).ToString("C2"))
+                                </td>
+                                <td style="text-align: center;">
+                                    <button type="button" class="pdm-btn pdm-btn-danger pdm-btn-sm btn-remove-row" style="padding: 6px 12px;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--pdm-border); margin: 30px 0;" />
+
+        <!-- Yield, Profit & Pricing -->
+        <h3 class="serif" style="margin-bottom: 20px; color: var(--pdm-dark); font-size: 1.5rem;">Rendimento e Preços</h3>
+
+        <div class="pdm-form-grid" style="margin-bottom: 30px;">
+            <div class="pdm-form-group">
+                <label for="RendimentoUnidades">Rendimento do Lote (Velas produzidas) *</label>
+                <input asp-for="RendimentoUnidades" type="number" min="1" class="pdm-form-control" id="RendimentoUnidades" required />
+                <span asp-validation-for="RendimentoUnidades" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+            </div>
+
+            <div class="pdm-form-group">
+                <label for="MargemLucro">Margem de Lucro Desejada (%) *</label>
+                <input asp-for="MargemLucro" type="number" step="0.1" class="pdm-form-control" id="MargemLucro" required />
+                <span asp-validation-for="MargemLucro" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+            </div>
+        </div>
+
+        <!-- Cost & Price summary block -->
+        <div style="background-color: #fdfaf3; border-radius: 16px; border: 1px solid #fde68a; padding: 24px; margin-bottom: 30px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px;">
+                <div>
+                    <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--pdm-muted); font-weight: 600;">Custo Total Lote</span>
+                    <h4 id="summaryCustoLote" style="font-size: 1.8rem; margin: 4px 0 0; color: var(--pdm-dark);">R$ 0,00</h4>
+                </div>
+                <div>
+                    <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--pdm-muted); font-weight: 600;">Custo Unitário (Vela)</span>
+                    <h4 id="summaryCustoUnitario" style="font-size: 1.8rem; margin: 4px 0 0; color: var(--pdm-dark);">R$ 0,00</h4>
+                </div>
+                <div>
+                    <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--pdm-muted); font-weight: 600;">Preço Sugerido Venda</span>
+                    <h4 id="summaryPrecoVenda" style="font-size: 1.8rem; margin: 4px 0 0; color: var(--pdm-primary-hover); font-weight: 700;">R$ 0,00</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed instructions -->
+        <div class="pdm-form-group" style="margin-bottom: 40px;">
+            <label for="Instrucoes">Modo de Fazer / Instruções de Preparo</label>
+            <textarea asp-for="Instrucoes" class="pdm-form-control" id="Instrucoes" rows="6" placeholder="Descreva os passos..."></textarea>
+            <span asp-validation-for="Instrucoes" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+        </div>
+
+        <div style="display: flex; gap: 15px; justify-content: flex-end;">
+            <a href="/Admin/PDM/Receitas" class="pdm-btn pdm-btn-outline">Cancelar</a>
+            <button type="submit" class="pdm-btn pdm-btn-primary" id="btnSubmit">
+                <i class="fas fa-save"></i> Salvar Alterações
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Insumos serialized from C# controller
+        const insumosList = @Html.Raw(Json.Serialize(ViewBag.Produtos));
+        const selectOptionsHtml = insumosList.map(i => `<option value="${i.id}">${i.nome}</option>`).join('');
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnAddIngredient = document.getElementById("btnAddIngredient");
+            const ingredientsList = document.getElementById("ingredientsList");
+            const yieldInput = document.getElementById("RendimentoUnidades");
+            const profitInput = document.getElementById("MargemLucro");
+
+            btnAddIngredient.addEventListener("click", () => addIngredientRow());
+            yieldInput.addEventListener("input", calculateTotals);
+            profitInput.addEventListener("input", calculateTotals);
+
+            // Setup listeners for pre-rendered rows
+            const preRenderedRows = ingredientsList.querySelectorAll("tr");
+            preRenderedRows.forEach(row => {
+                setupRowListeners(row);
+            });
+
+            if(preRenderedRows.length === 0) {
+                addIngredientRow();
+            } else {
+                calculateTotals();
+            }
+
+            function addIngredientRow() {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <select name="produtoIds" class="pdm-form-control select-insumo" required>
+                            <option value="">-- Selecione o Insumo --</option>
+                            ${selectOptionsHtml}
+                        </select>
+                    </td>
+                    <td>
+                        <input name="quantidades" type="number" step="0.0001" class="pdm-form-control input-qty" value="0.0000" min="0.0001" required />
+                    </td>
+                    <td>
+                        <span class="pdm-badge pdm-badge-info badge-unidade">-</span>
+                    </td>
+                    <td style="text-align: right; font-weight: 600;" class="col-custo">
+                        R$ 0,00
+                    </td>
+                    <td style="text-align: center;">
+                        <button type="button" class="pdm-btn pdm-btn-danger pdm-btn-sm btn-remove-row" style="padding: 6px 12px;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+
+                ingredientsList.appendChild(tr);
+                setupRowListeners(tr);
+                calculateTotals();
+            }
+
+            function setupRowListeners(row) {
+                const selectEl = row.querySelector(".select-insumo");
+                const qtyInput = row.querySelector(".input-qty");
+                const btnRemove = row.querySelector(".btn-remove-row");
+
+                selectEl.addEventListener("change", () => {
+                    updateRowUnit(row, selectEl.value);
+                    calculateTotals();
+                });
+                qtyInput.addEventListener("input", calculateTotals);
+                btnRemove.addEventListener("click", () => {
+                    row.remove();
+                    if(ingredientsList.children.length === 0) {
+                        addIngredientRow();
+                    }
+                    calculateTotals();
+                });
+            }
+
+            function updateRowUnit(row, prodId) {
+                const badge = row.querySelector(".badge-unidade");
+                const insumo = insumosList.find(i => i.id == prodId);
+                if(insumo) {
+                    const label = getUnitLabel(insumo.unidadeMedida);
+                    badge.textContent = label;
+                } else {
+                    badge.textContent = "-";
+                }
+            }
+
+            function getUnitLabel(enumVal) {
+                switch(enumVal) {
+                    case 0: return "kg"; // UnidadeMedida.KG
+                    case 1: return "ml"; // UnidadeMedida.ML
+                    case 2: return "un"; // UnidadeMedida.UN
+                    case 3: return "mt"; // UnidadeMedida.MT
+                    default: return "-";
+                }
+            }
+
+            function calculateTotals() {
+                let totalCustoLote = 0;
+                const rows = ingredientsList.querySelectorAll("tr");
+                
+                rows.forEach(row => {
+                    const prodId = row.querySelector(".select-insumo").value;
+                    const qty = parseFloat(row.querySelector(".input-qty").value) || 0;
+                    const colCusto = row.querySelector(".col-custo");
+                    
+                    const insumo = insumosList.find(i => i.id == prodId);
+                    if(insumo) {
+                        const custoProporcional = qty * insumo.precoCusto;
+                        totalCustoLote += custoProporcional;
+                        colCusto.textContent = custoProporcional.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                    } else {
+                        colCusto.textContent = "R$ 0,00";
+                    }
+                });
+
+                const yieldVal = parseInt(yieldInput.value) || 1;
+                const profitPct = parseFloat(profitInput.value) || 0;
+                const operPct = 15;
+
+                const totalCustoUnitario = totalCustoLote / yieldVal;
+                const custoOperacionalUnitario = totalCustoUnitario * (1 + operPct / 100);
+                const precoVendaSugerido = custoOperacionalUnitario * (1 + profitPct / 100);
+
+                document.getElementById("summaryCustoLote").textContent = totalCustoLote.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                document.getElementById("summaryCustoUnitario").textContent = totalCustoUnitario.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                document.getElementById("summaryPrecoVenda").textContent = precoVendaSugerido.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+            }
+        });
+    </script>
+}

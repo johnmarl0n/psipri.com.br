@@ -1,0 +1,52 @@
+@model psipri.com.br.Models.PDM.PDMCliente
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div style="margin-bottom: 24px;">
+    <a href="/Admin/PDM/Clientes" class="pdm-btn pdm-btn-outline pdm-btn-sm">
+        <i class="fas fa-arrow-left"></i> Voltar à Lista
+    </a>
+</div>
+
+<div class="pdm-card" style="max-width: 600px; margin: 0 auto;">
+    <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.8rem; color: var(--pdm-dark);">
+        <i class="fas fa-user-edit" style="color: var(--pdm-primary); margin-right: 8px;"></i> Editar Cliente
+    </h3>
+
+    <form action="/Admin/PDM/Cliente/Editar/@Model.Id" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="pdm-form-group">
+            <label for="Nome">Nome Completo *</label>
+            <input asp-for="Nome" class="pdm-form-control" id="Nome" required />
+            <span asp-validation-for="Nome" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="pdm-form-group">
+            <label for="Email">E-mail</label>
+            <input asp-for="Email" type="email" class="pdm-form-control" id="Email" />
+            <span asp-validation-for="Email" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="pdm-form-group">
+            <label for="Telefone">Telefone / WhatsApp</label>
+            <input asp-for="Telefone" class="pdm-form-control" id="Telefone" />
+            <span asp-validation-for="Telefone" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+        </div>
+
+        <div class="pdm-form-group">
+            <label for="Observacoes">Observações / Preferências</label>
+            <textarea asp-for="Observacoes" class="pdm-form-control" id="Observacoes" rows="4"></textarea>
+            <span asp-validation-for="Observacoes" style="color: var(--pdm-danger); font-size: 0.8rem;"></span>
+        </div>
+
+        <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 30px;">
+            <a href="/Admin/PDM/Clientes" class="pdm-btn pdm-btn-outline">Cancelar</a>
+            <button type="submit" class="pdm-btn pdm-btn-primary">
+                <i class="fas fa-save"></i> Salvar Alterações
+            </button>
+        </div>
+    </form>
+</div>

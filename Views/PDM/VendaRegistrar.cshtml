@@ -1,0 +1,207 @@
+@{
+    Layout = "_LayoutPDM";
+    
+    // Calculate suggested price for each recipe to serialize into JavaScript
+    var recipesList = (List<psipri.com.br.Models.PDM.PDMReceita>)ViewBag.Receitas;
+    var serializedRecipes = recipesList.Select(r => {
+        decimal custoLote = r.ReceitaItems?.Sum(ri => ri.Quantidade * (ri.Produto?.PrecoCusto ?? 0)) ?? 0;
+        decimal custoUnitario = r.RendimentoUnidades > 0 ? (custoLote / r.RendimentoUnidades) : 0;
+        // Margem Operacional de 15%
+        decimal custoOperacionalUnitario = custoUnitario * 1.15m;
+        decimal precoSugerido = custoOperacionalUnitario * (1 + r.MargemLucro / 100);
+        return new {
+            id = r.Id,
+            nome = r.Nome,
+            preco = precoSugerido
+        };
+    }).ToList();
+}
+
+<div style="margin-bottom: 24px;">
+    <a href="/Admin/PDM/Vendas" class="pdm-btn pdm-btn-outline pdm-btn-sm">
+        <i class="fas fa-arrow-left"></i> Voltar às Vendas
+    </a>
+</div>
+
+<div class="pdm-card" style="max-width: 900px; margin: 0 auto 50px;">
+    <h3 class="serif" style="margin-top: 0; margin-bottom: 25px; font-size: 1.8rem; color: var(--pdm-dark);">
+        <i class="fas fa-cart-plus" style="color: var(--pdm-primary); margin-right: 8px;"></i> Registrar Nova Venda
+    </h3>
+
+    <form action="/Admin/PDM/Venda/Registrar" method="post" id="salesForm">
+        @Html.AntiForgeryToken()
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 30px;">
+            <!-- Client Selection -->
+            <div class="pdm-form-group" style="margin-bottom: 0;">
+                <label for="clienteId">Cliente *</label>
+                <select name="clienteId" class="pdm-form-control" id="clienteId">
+                    <option value="">-- Venda Avulsa (Sem Cadastro) --</option>
+                    @foreach (var cli in ViewBag.Clientes)
+                    {
+                        <option value="@cli.Id">@cli.Nome</option>
+                    }
+                </select>
+            </div>
+            
+            <!-- Discount Input -->
+            <div class="pdm-form-group" style="margin-bottom: 0;">
+                <label for="desconto">Desconto (R$)</label>
+                <input type="number" name="desconto" step="0.01" class="pdm-form-control" id="desconto" value="0.00" />
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--pdm-border); margin: 25px 0;" />
+
+        <!-- Products Sold -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 class="serif" style="margin: 0; color: var(--pdm-dark); font-size: 1.5rem;">Itens da Venda</h3>
+            <button type="button" class="pdm-btn pdm-btn-secondary pdm-btn-sm" id="btnAddItem">
+                <i class="fas fa-plus"></i> Adicionar Item
+            </button>
+        </div>
+
+        <div class="pdm-table-container" style="margin-bottom: 30px;">
+            <table class="pdm-table" id="salesTable">
+                <thead>
+                    <tr>
+                        <th>Receita (Vela)</th>
+                        <th style="width: 120px; text-align: right;">Quantidade</th>
+                        <th style="width: 150px; text-align: right;">Preço Unitário (R$)</th>
+                        <th style="width: 150px; text-align: right;">Subtotal</th>
+                        <th style="width: 80px; text-align: center;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="salesList">
+                    <!-- Dynamic rows go here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Summary Block -->
+        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px; padding: 24px; margin-bottom: 35px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; text-align: right;">
+                <div>
+                    <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--pdm-muted); font-weight: 600;">Total Bruto</span>
+                    <h4 id="summaryTotalBruto" style="font-size: 1.6rem; margin: 4px 0 0; color: var(--pdm-dark);">R$ 0,00</h4>
+                </div>
+                <div>
+                    <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--pdm-danger); font-weight: 600;">Desconto</span>
+                    <h4 id="summaryDesconto" style="font-size: 1.6rem; margin: 4px 0 0; color: var(--pdm-danger);">- R$ 0,00</h4>
+                </div>
+                <div>
+                    <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--pdm-success); font-weight: 700;">Total Final</span>
+                    <h4 id="summaryTotalFinal" style="font-size: 1.8rem; margin: 4px 0 0; color: #16a34a; font-weight: 800;">R$ 0,00</h4>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; justify-content: flex-end;">
+            <a href="/Admin/PDM/Vendas" class="pdm-btn pdm-btn-outline">Cancelar</a>
+            <button type="submit" class="pdm-btn pdm-btn-primary">
+                <i class="fas fa-check"></i> Finalizar Venda
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        // Recipes serialized from C# controller
+        const receitasList = @Html.Raw(Json.Serialize(serializedRecipes));
+        const selectOptionsHtml = receitasList.map(r => `<option value="${r.id}">${r.nome}</option>`).join('');
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnAddItem = document.getElementById("btnAddItem");
+            const salesList = document.getElementById("salesList");
+            const descontoInput = document.getElementById("desconto");
+
+            // Add first item automatically
+            if(salesList.children.length === 0) {
+                addItemRow();
+            }
+
+            btnAddItem.addEventListener("click", () => addItemRow());
+            descontoInput.addEventListener("input", calculateTotals);
+
+            function addItemRow() {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <select name="receitaIds" class="pdm-form-control select-receita" required>
+                            <option value="">-- Selecione a Vela --</option>
+                            ${selectOptionsHtml}
+                        </select>
+                    </td>
+                    <td>
+                        <input name="quantidades" type="number" min="1" value="1" class="pdm-form-control input-qty text-right" required />
+                    </td>
+                    <td>
+                        <input name="precosUnitarios" type="number" step="0.01" class="pdm-form-control input-price text-right" value="0.00" required />
+                    </td>
+                    <td style="text-align: right; font-weight: 600;" class="col-subtotal">
+                        R$ 0,00
+                    </td>
+                    <td style="text-align: center;">
+                        <button type="button" class="pdm-btn pdm-btn-danger pdm-btn-sm btn-remove-row" style="padding: 6px 12px;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+
+                salesList.appendChild(tr);
+
+                const selectEl = tr.querySelector(".select-receita");
+                const qtyInput = tr.querySelector(".input-qty");
+                const priceInput = tr.querySelector(".input-price");
+                const btnRemove = tr.querySelector(".btn-remove-row");
+
+                selectEl.addEventListener("change", () => {
+                    const recId = selectEl.value;
+                    const receita = receitasList.find(r => r.id == recId);
+                    if(receita) {
+                        priceInput.value = receita.preco.toFixed(2);
+                    } else {
+                        priceInput.value = "0.00";
+                    }
+                    calculateTotals();
+                });
+
+                qtyInput.addEventListener("input", calculateTotals);
+                priceInput.addEventListener("input", calculateTotals);
+                
+                btnRemove.addEventListener("click", () => {
+                    tr.remove();
+                    if(salesList.children.length === 0) {
+                        addItemRow();
+                    }
+                    calculateTotals();
+                });
+
+                calculateTotals();
+            }
+
+            function calculateTotals() {
+                let totalBruto = 0;
+                const rows = salesList.querySelectorAll("tr");
+
+                rows.forEach(row => {
+                    const qty = parseInt(row.querySelector(".input-qty").value) || 0;
+                    const price = parseFloat(row.querySelector(".input-price").value) || 0;
+                    const colSubtotal = row.querySelector(".col-subtotal");
+
+                    const subtotal = qty * price;
+                    totalBruto += subtotal;
+                    colSubtotal.textContent = subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                });
+
+                const discount = parseFloat(descontoInput.value) || 0;
+                const totalFinal = totalBruto - discount;
+
+                document.getElementById("summaryTotalBruto").textContent = totalBruto.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+                document.getElementById("summaryDesconto").textContent = `- ${discount.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}`;
+                document.getElementById("summaryTotalFinal").textContent = totalFinal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+            }
+        });
+    </script>
+}

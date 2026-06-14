@@ -1,0 +1,94 @@
+@model IEnumerable<psipri.com.br.Models.PDM.PDMVenda>
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div>
+        <p style="color: var(--pdm-muted); margin: 0;">Monitore o faturamento, as vendas realizadas e os itens comercializados.</p>
+    </div>
+    <div>
+        <a href="/Admin/PDM/Venda/Registrar" class="pdm-btn pdm-btn-primary">
+            <i class="fas fa-cart-plus"></i> Registrar Venda
+        </a>
+    </div>
+</div>
+
+<div class="pdm-card" style="padding: 0; overflow: hidden;">
+    <div class="pdm-table-container" style="border: none; border-radius: 0;">
+        <table class="pdm-table">
+            <thead>
+                <tr>
+                    <th>Data da Venda</th>
+                    <th>Cliente</th>
+                    <th>Itens Vendidos</th>
+                    <th style="text-align: right;">Total Bruto</th>
+                    <th style="text-align: right;">Desconto</th>
+                    <th style="text-align: right;">Total Líquido</th>
+                    <th style="text-align: center; width: 100px;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--pdm-muted);">
+                            <i class="fas fa-hand-holding-usd" style="font-size: 3rem; margin-bottom: 15px; display: block; color: #cbd5e1;"></i>
+                            Nenhuma venda registrada ainda.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var venda in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600; color: var(--pdm-dark);">@venda.DataVenda.ToString("dd/MM/yyyy")</div>
+                                <div style="font-size: 0.8rem; color: var(--pdm-muted);">@venda.DataVenda.ToString("HH:mm")</div>
+                            </td>
+                            <td>
+                                @if (venda.Cliente != null)
+                                {
+                                    <div style="font-weight: 600; color: var(--pdm-dark);">@venda.Cliente.Nome</div>
+                                }
+                                else
+                                {
+                                    <span style="color: var(--pdm-muted); font-style: italic;">Venda Avulsa (Sem Cadastro)</span>
+                                }
+                            </td>
+                            <td>
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    @foreach (var item in venda.VendaItems)
+                                    {
+                                        <div style="font-size: 0.85rem; color: var(--pdm-text);">
+                                            <strong>@item.Quantidade x</strong> @(item.Receita?.Nome ?? "Receita Excluída")
+                                            <span style="color: var(--pdm-muted); font-size: 0.75rem;">(@item.PrecoUnitario.ToString("C2") un)</span>
+                                        </div>
+                                    }
+                                </div>
+                            </td>
+                            <td style="text-align: right; color: var(--pdm-muted);">
+                                @venda.ValorTotal.ToString("C2")
+                            </td>
+                            <td style="text-align: right; color: var(--pdm-danger);">
+                                -@venda.Desconto.ToString("C2")
+                            </td>
+                            <td style="text-align: right; font-weight: 700; color: var(--pdm-success);">
+                                @venda.ValorFinal.ToString("C2")
+                            </td>
+                            <td style="text-align: center;">
+                                <form action="/Admin/PDM/Venda/Excluir/@venda.Id" method="post" onsubmit="return confirm('Deseja realmente estornar/excluir esta venda?');">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="pdm-btn pdm-btn-danger pdm-btn-sm" style="padding: 6px 12px; font-size: 0.8rem;" title="Excluir Venda">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,138 @@
+@model IEnumerable<psipri.com.br.Models.PDM.PDMProduto>
+@using psipri.com.br.Models.PDM.Enums
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div>
+        <p style="color: var(--pdm-muted); margin: 0;">Gerencie e acompanhe a quantidade, custo e preços sugeridos das matérias-primas.</p>
+    </div>
+    <div style="display: flex; gap: 12px;">
+        <a href="/Admin/PDM/Produto/Criar" class="pdm-btn pdm-btn-primary">
+            <i class="fas fa-plus"></i> Novo Insumo
+        </a>
+    </div>
+</div>
+
+<!-- Category filter toolbar -->
+<div class="pdm-card" style="margin-bottom: 30px; padding: 16px 24px;">
+    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <span style="font-weight: 600; font-size: 0.9rem; color: var(--pdm-dark);">Filtrar por Categoria:</span>
+        <a href="/Admin/PDM/Produtos" class="pdm-btn pdm-btn-sm @(ViewBag.SelectedCategoriaId == null ? "pdm-btn-primary" : "pdm-btn-outline")">
+            Todos
+        </a>
+        @foreach (var cat in ViewBag.Categorias)
+        {
+            <a href="/Admin/PDM/Produtos?categoriaId=@cat.Id" class="pdm-btn pdm-btn-sm @(ViewBag.SelectedCategoriaId == cat.Id ? "pdm-btn-primary" : "pdm-btn-outline")">
+                <i class="fas @cat.Icone" style="margin-right: 4px;"></i> @cat.Nome
+            </a>
+        }
+    </div>
+</div>
+
+<!-- Products Table -->
+<div class="pdm-card" style="padding: 0; overflow: hidden;">
+    <div class="pdm-table-container" style="border: none; border-radius: 0;">
+        <table class="pdm-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Imagem</th>
+                    <th>Nome / Categoria</th>
+                    <th>Unidade</th>
+                    <th style="text-align: right;">Qtd Estoque</th>
+                    <th style="text-align: right;">Preço Custo</th>
+                    <th style="text-align: right;">Margem</th>
+                    <th style="text-align: right;">Preço Sugerido</th>
+                    <th style="text-align: center; width: 150px;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--pdm-muted);">
+                            <i class="fas fa-box-open" style="font-size: 3rem; margin-bottom: 15px; display: block; color: #cbd5e1;"></i>
+                            Nenhum insumo cadastrado neste filtro.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var produto in Model)
+                    {
+                        var isLowStock = produto.QuantidadeEstoque <= produto.EstoqueMinimo;
+                        var unitLabel = produto.UnidadeMedida switch
+                        {
+                            UnidadeMedida.KG => "kg",
+                            UnidadeMedida.ML => "ml",
+                            UnidadeMedida.UN => "un",
+                            UnidadeMedida.MT => "mt",
+                            _ => ""
+                        };
+                        
+                        <tr>
+                            <td>
+                                @if (produto.ImagemThumb != null)
+                                {
+                                    <img src="/Admin/PDM/Produto/Imagem/@produto.Id" alt="@produto.Nome" style="width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid var(--pdm-border);" />
+                                }
+                                else
+                                {
+                                    <div style="width: 50px; height: 50px; border-radius: 10px; background-color: #f1f5f9; display: flex; align-items: center; justify-content: center; color: var(--pdm-muted); border: 1px solid var(--pdm-border);">
+                                        <i class="fas @(produto.Categoria?.Icone ?? "fa-box")" style="font-size: 1.2rem;"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <div style="font-weight: 600; color: var(--pdm-dark);">@produto.Nome</div>
+                                <div style="font-size: 0.8rem; color: var(--pdm-muted); display: flex; align-items: center; gap: 6px; margin-top: 4px;">
+                                    <i class="fas @(produto.Categoria?.Icone ?? "fa-tag")" style="color: var(--pdm-primary); font-size: 0.75rem;"></i>
+                                    @produto.Categoria?.Nome
+                                </div>
+                            </td>
+                            <td>
+                                <span class="pdm-badge pdm-badge-info">@unitLabel</span>
+                            </td>
+                            <td style="text-align: right;">
+                                <div style="font-weight: 700; color: @(isLowStock ? "var(--pdm-danger)" : "var(--pdm-dark)")">
+                                    @produto.QuantidadeEstoque.ToString("N3")
+                                </div>
+                                <div style="font-size: 0.75rem; color: var(--pdm-muted);">
+                                    Mín: @produto.EstoqueMinimo.ToString("N3")
+                                </div>
+                                @if (isLowStock)
+                                {
+                                    <span class="pdm-badge pdm-badge-danger" style="font-size: 0.65rem; padding: 2px 6px; margin-top: 4px; display: inline-flex;">Estoque Baixo</span>
+                                }
+                            </td>
+                            <td style="text-align: right; font-weight: 500;">
+                                @produto.PrecoCusto.ToString("C2")
+                            </td>
+                            <td style="text-align: right; color: var(--pdm-muted);">
+                                @produto.Margem.ToString("N1")%
+                            </td>
+                            <td style="text-align: right; font-weight: 700; color: var(--pdm-primary-hover);">
+                                @produto.PrecoVenda.ToString("C2")
+                            </td>
+                            <td style="text-align: center;">
+                                <div style="display: flex; gap: 8px; justify-content: center;">
+                                    <a href="/Admin/PDM/Produto/Editar/@produto.Id" class="pdm-btn pdm-btn-outline pdm-btn-sm" style="padding: 6px 12px; font-size: 0.8rem;" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    
+                                    <form href="/Admin/PDM/Produto/Excluir/@produto.Id" method="post" onsubmit="return confirm('Deseja realmente excluir este produto?');" style="display: inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="pdm-btn pdm-btn-danger pdm-btn-sm" style="padding: 6px 12px; font-size: 0.8rem;" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

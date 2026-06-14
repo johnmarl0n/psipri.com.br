@@ -1,72 +1,62 @@
-# Psipri - Landing Page Profissional para Psicologia
+# Psipri - Landing Page Profissional e Gestão Pingo de Mel
 
 ![Versão .NET](https://img.shields.io/badge/.NET-8.0-blue.svg)
 ![Licença](https://img.shields.io/badge/Licença-No%20License-red.svg)
 
-Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, projetada especificamente para profissionais de psicologia, com foco especial em **Psicologia Jurídica e Clínica**.
+Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, projetada para profissionais de psicologia (clínica e jurídica) e integrada a um sistema de gestão sob medida para a fabricação artesanal de velas da marca **Pingo de Mel**.
 
 ## 🌟 Funcionalidades
 
-### Landing Page Pública
-- **Design Premium:** Estética inspirada em referências modernas de alta qualidade, com paleta de cores orgânica e tipografia sofisticada.
-- **SEO Local de Alta Performance:** Cabeçalho `<h1>` e títulos semânticos otimizados para termos locais de busca ("Psicóloga Clínica e Jurídica em Campinas"), dados estruturados em JSON-LD (`ProfessionalService` do Schema.org) injetados para indexação rápida no Google Maps, e mapeamento técnico via arquivos `robots.txt` e `sitemap.xml`.
-- **Atuação Clínica:** Seção interativa em estilo acordeão para detalhamento de especialidades.
-- **Atendimento Online:** Seção dedicada explicando as vantagens e o funcionamento da psicoterapia remota.
-- **Blog Integrado:** Sistema de posts e "playbooks" para compartilhamento de conhecimento técnico.
+### 1. Landing Page Pública (Redesenhada)
+- **Design Premium & Acolhedor:** Estética elegante com paleta de cores curada em tons de verde oliva (`#2D3E2F`) e dourado fosco (`#A68B5C`), com sombras suaves e micro-animações interativas.
+- **Seletor Interativo ("Como posso te ajudar hoje?"):** Painel dinâmico em JavaScript que permite ao paciente clicar no sintoma/necessidade atual (Ansiedade, Relacionamento, Perícias, etc.) e visualizar uma mensagem empática com um botão de agendamento rápido via WhatsApp contendo texto personalizado.
+- **Diferenciais da Profissional:** Seção visual em cards destacando "Escuta Acolhedora", "Embasamento Científico", "Sigilo Absoluto" e "Rigor Jurídico".
+- **FAQ Dinâmico:** Acordeão contendo as principais dúvidas sobre consultas online, reembolso de planos de saúde e perícias técnicas.
+- **SEO Local & Estruturação:** Títulos `<h1>` otimizados para termos locais ("Psicóloga Clínica e Jurídica em Campinas"), sitemap.xml, robots.txt e dados estruturados em JSON-LD (`ProfessionalService`) para Google Maps.
 
-### Área Administrativa (Painel de Manutenção)
-- **Segurança Robusta:** Autenticação via ASP.NET Core Identity com proteção CSRF refinada e suporte a ambientes sem SSL (URLs temporárias).
-- **Gestão de Conteúdo:** Edição dinâmica da seção "Sobre" com suporte a cores, imagens, vídeos do YouTube e alinhamento via Quill.js.
-- **Gestão de Blog:** CRUD completo de postagens com suporte a conteúdo rico e multimídia.
-- **Visualização Responsiva:** Filtros de CSS customizados para garantir que imagens e vídeos inseridos sejam 100% responsivos no site público.
-- **Login Customizado:** Interface de autenticação totalmente traduzida (PT-BR), limpa e com alternador de visibilidade de senha (eye-toggle) integrado ao campo.
+### 2. Painel de Manutenção Administrativa
+- **Gestão de Conteúdo:** Edição dinâmica da biografia "Sobre" com suporte a Quill.js (imagens, vídeos e formatação rica) e alteração direta da foto principal (Hero) do site.
+- **Gestão do Blog:** CRUD completo de artigos e publicações técnicas com redimensionamento de layouts responsivos.
+
+### 3. Sistema Pingo de Mel (CRM, Estoque & Vendas)
+- **Controle de Insumos (Estoque):** Cadastro de produtos por unidades de medida adequadas (KG para cera, ML para essências/corantes, UN para pavios/potes, MT para fitas).
+- **Fórmulas de Receitas:** Composição detalhada de velas. O sistema calcula automaticamente o custo real do produto e sugere um preço de venda com base em uma margem de markup configurável (margem de custo operacional).
+- **Lançamento de Produção:** Produção em lote que realiza a baixa automática no estoque dos insumos individuais de acordo com a receita.
+- **CRM & Vendas Mensais:** Histórico de clientes, registro de vendas mensais com cálculo automático e controle de faturamento.
+- **Personalizador e Impressão de Etiquetas:** Painel integrado para personalizar e imprimir etiquetas das velas diretamente da receita. Suporta layouts de A4 (6 ou 12 etiquetas por página) e rolo de bobina térmica individual (80x80mm) com estilos de impressão limpos (`@media print`).
+- **Fechamento Mensal Automatizado:** Um serviço em segundo plano (`BackgroundService` no ASP.NET) configurado para rodar às 23:45 do último dia de cada mês, tirando um "print" da posição de estoque e valor total de ativos para auditoria financeira histórica.
 
 ## 🛠️ Tecnologias Utilizadas
 
 - **Core:** ASP.NET Core 8.0 MVC
-- **Banco de Dados:** Microsoft SQL Server (MSSQL) (otimizado para melhor desempenho e baixíssimo consumo de RAM na hospedagem)
-- **Identidade:** Microsoft.AspNetCore.Identity (customizado para login único e segurança reforçada)
-- **E-mail:** MailKit (SMTP Integration)
+- **Banco de Dados:** Microsoft SQL Server (MSSQL)
+- **Identidade:** Microsoft.AspNetCore.Identity (login administrativo em PT-BR)
+- **E-mail:** MailKit (Integração SMTP com disparo seguro)
+- **Trabalho em Segundo Plano:** HostedServices nativos do .NET
 - **Frontend:** Vanilla JS, CSS3, FontAwesome 6, Quill.js
-- **Otimização:** BuildBundlerMinifier para empacotamento e minificação automática de ativos.
+- **Otimização:** BuildBundlerMinifier para minificação automática de CSS (`site.min.css`).
 
-## ⚙️ Melhorias de Estabilização e Produção
-
-Recentemente, o projeto passou por uma rodada de estabilização para garantir o funcionamento perfeito em servidores como **SmarterASP.NET**:
-- **Otimização de SEO Local:** Reestruturação semântica do título `<h1>` e textos na home page, geração automática de arquivos `robots.txt` e `sitemap.xml` para buscadores, e injeção de dados estruturados JSON-LD (`ProfessionalService` do Schema.org) para destaque local no Google Maps.
-- **Migração de Banco de Dados:** Banco totalmente migrado de SQLite para SQL Server, resolvendo problemas de gargalo de memória RAM e reciclagem de pool de aplicativos no ambiente IIS do SmarterASP.NET.
-- **Migrações Automáticas:** O sistema agora aplica migrações de banco de dados automaticamente ao iniciar no servidor, dispensando comandos manuais de terminal.
-- **Seeding de Segurança:** Garantia programática de que apenas o usuário administrador ("Priscila") exista, com remoção automática de contas não autorizadas e reset de senha via código.
-- **Políticas de Cookies:** Ajustadas para permitir o login em URLs temporárias via HTTP, mantendo a segurança via `SameAsRequest`.
-
-## 🚀 Como Iniciar o Projeto
+## ⚙️ Configurações e Instalação
 
 ### Pré-requisitos
 - .NET 8.0 SDK
-- Visual Studio 2022 ou VS Code
+- Servidor SQL Server configurado
 
-### Configuração Local
-1. Clone o repositório.
-2. Configure suas credenciais de e-mail no arquivo `appsettings.json`.
-3. Aplique as migrations iniciais:
+### Configuração
+1. Configure a string de conexão ("DefaultConnection") e credenciais de SMTP no arquivo `appsettings.json`.
+2. O banco de dados executará todas as migrações estruturais e seedings de forma automatizada ao iniciar o aplicativo.
+3. Para rodar localmente:
    ```bash
-   dotnet ef database update
-   ```
-4. Execute o projeto:
-   ```bash
-   dotnet run
+   dotnet build
+   dotnet run --urls "http://localhost:5058"
    ```
 
-## 📦 Implantação (Deployment)
+## 📦 Deploy em Produção
 
-O projeto está configurado para publicação em ambiente Windows/Linux. Para gerar os arquivos de produção:
+Para gerar o pacote otimizado e pronto para publicação no servidor (ex: IIS / SmarterASP.NET):
 ```bash
 dotnet publish -c Release
 ```
-
-## 📜 Licença
-
-Este projeto é de uso exclusivo e não possui uma licença aberta (**No License**). Todos os direitos reservados ao autor.
 
 ---
 Desenvolvido por **John Dias** (johnmarl0n) para Dra. Priscila Batista.

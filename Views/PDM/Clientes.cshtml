@@ -1,0 +1,77 @@
+@model IEnumerable<psipri.com.br.Models.PDM.PDMCliente>
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+    <div>
+        <p style="color: var(--pdm-muted); margin: 0;">Gerencie o cadastro de clientes para controle de fidelidade e análise de vendas personalizadas.</p>
+    </div>
+    <div>
+        <a href="/Admin/PDM/Cliente/Criar" class="pdm-btn pdm-btn-primary">
+            <i class="fas fa-user-plus"></i> Novo Cliente
+        </a>
+    </div>
+</div>
+
+<div class="pdm-card" style="padding: 0; overflow: hidden;">
+    <div class="pdm-table-container" style="border: none; border-radius: 0;">
+        <table class="pdm-table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Observações</th>
+                    <th style="text-align: center; width: 150px;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--pdm-muted);">
+                            <i class="fas fa-users-slash" style="font-size: 3rem; margin-bottom: 15px; display: block; color: #cbd5e1;"></i>
+                            Nenhum cliente cadastrado ainda.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var cliente in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600; color: var(--pdm-dark);">@cliente.Nome</div>
+                                <div style="font-size: 0.75rem; color: var(--pdm-muted);">Cadastrado em @cliente.CriadoEm.ToString("dd/MM/yyyy")</div>
+                            </td>
+                            <td>
+                                @(string.IsNullOrWhiteSpace(cliente.Email) ? "-" : cliente.Email)
+                            </td>
+                            <td>
+                                @(string.IsNullOrWhiteSpace(cliente.Telefone) ? "-" : cliente.Telefone)
+                            </td>
+                            <td style="color: var(--pdm-muted); font-size: 0.9rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                @(string.IsNullOrWhiteSpace(cliente.Observacoes) ? "-" : cliente.Observacoes)
+                            </td>
+                            <td style="text-align: center;">
+                                <div style="display: flex; gap: 8px; justify-content: center;">
+                                    <a href="/Admin/PDM/Cliente/Editar/@cliente.Id" class="pdm-btn pdm-btn-outline pdm-btn-sm" style="padding: 6px 12px; font-size: 0.8rem;" title="Editar">
+                                        <i class="fas fa-user-edit"></i>
+                                    </a>
+                                    
+                                    <form action="/Admin/PDM/Cliente/Excluir/@cliente.Id" method="post" onsubmit="return confirm('Deseja realmente excluir este cliente?');" style="display: inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="pdm-btn pdm-btn-danger pdm-btn-sm" style="padding: 6px 12px; font-size: 0.8rem;" title="Excluir">
+                                            <i class="fas fa-user-minus"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

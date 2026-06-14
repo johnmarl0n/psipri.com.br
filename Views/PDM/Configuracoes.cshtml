@@ -1,0 +1,38 @@
+@{
+    Layout = "_LayoutPDM";
+}
+
+<div class="pdm-card" style="max-width: 600px; margin: 0 auto 50px;">
+    <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.8rem; color: var(--pdm-dark);">
+        <i class="fas fa-cog" style="color: var(--pdm-primary); margin-right: 8px;"></i> Configurações do Sistema
+    </h3>
+
+    <form action="/Admin/PDM/Configuracoes/Salvar" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="pdm-form-group">
+            <label for="margemOperacional">Margem Operacional Global (%) *</label>
+            <input type="number" step="0.01" name="margemOperacional" class="pdm-form-control" id="margemOperacional" value="@ViewBag.MargemOperacional" required />
+            <p style="font-size: 0.8rem; color: var(--pdm-muted); margin-top: 8px; line-height: 1.5;">
+                Esta porcentagem é adicionada automaticamente ao custo bruto das matérias-primas de uma receita para compensar perdas de processo, energia, água, tempo de cura e outros custos fixos não mensurados.
+                <br />
+                <strong>Exemplo:</strong> Se a margem operacional for 15.00%, e o custo de insumos da vela for R$ 10,00, o custo unitário considerado será R$ 11,50 antes de aplicar a margem de lucro.
+            </p>
+        </div>
+
+        <div style="background-color: #fdfaf3; border: 1px solid #fde68a; border-radius: 12px; padding: 15px; margin-bottom: 30px; display: flex; gap: 12px; align-items: flex-start;">
+            <i class="fas fa-info-circle" style="color: #d97706; margin-top: 2px;"></i>
+            <div style="font-size: 0.85rem; color: #92400e; line-height: 1.5;">
+                O cálculo do preço unitário de venda sugerido segue a seguinte fórmula:
+                <br />
+                <code>Preço Sugerido = [Custo Insumos / Rendimento] * (1 + Margem Operacional / 100) * (1 + Margem de Lucro da Receita / 100)</code>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 15px; justify-content: flex-end;">
+            <button type="submit" class="pdm-btn pdm-btn-primary">
+                <i class="fas fa-save"></i> Salvar Configurações
+            </button>
+        </div>
+    </form>
+</div>

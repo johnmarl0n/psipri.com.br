@@ -1,0 +1,217 @@
+@model IEnumerable<psipri.com.br.Models.PDM.PDMProduto>
+@{
+    Layout = "_LayoutPDM";
+    decimal faturamentoTotal = ViewBag.FaturamentoTotal;
+    decimal totalGasto = ViewBag.TotalGasto;
+    decimal lucroEstimado = faturamentoTotal - totalGasto;
+}
+
+<p style="color: var(--pdm-muted); margin-top: -15px; margin-bottom: 30px;">
+    Bem-vinda ao painel de controle da Pingo de Mel. Acompanhe a saúde financeira, nível de estoque e receitas.
+</p>
+
+<!-- KPI Cards -->
+<div class="pdm-kpi-grid">
+    <!-- Card 1: Faturamento -->
+    <div class="pdm-card pdm-kpi-card">
+        <div class="pdm-kpi-icon pdm-kpi-green">
+            <i class="fas fa-hand-holding-usd"></i>
+        </div>
+        <div class="pdm-kpi-info">
+            <span class="pdm-kpi-title">Faturamento Total</span>
+            <span class="pdm-kpi-value">@faturamentoTotal.ToString("C2")</span>
+        </div>
+    </div>
+
+    <!-- Card 2: Custos de Produção -->
+    <div class="pdm-card pdm-kpi-card">
+        <div class="pdm-kpi-icon pdm-kpi-orange">
+            <i class="fas fa-coins"></i>
+        </div>
+        <div class="pdm-kpi-info">
+            <span class="pdm-kpi-title">Investimento / Custos</span>
+            <span class="pdm-kpi-value">@totalGasto.ToString("C2")</span>
+        </div>
+    </div>
+
+    <!-- Card 3: Lucro Estimado -->
+    <div class="pdm-card pdm-kpi-card">
+        <div class="pdm-kpi-icon pdm-kpi-blue">
+            <i class="fas fa-piggy-bank"></i>
+        </div>
+        <div class="pdm-kpi-info">
+            <span class="pdm-kpi-title">Resultado Líquido</span>
+            <span class="pdm-kpi-value" style="color: @(lucroEstimado >= 0 ? "var(--pdm-success)" : "var(--pdm-danger)")">
+                @lucroEstimado.ToString("C2")
+            </span>
+        </div>
+    </div>
+
+    <!-- Card 4: Receitas Ativas -->
+    <div class="pdm-card pdm-kpi-card">
+        <div class="pdm-kpi-icon pdm-kpi-purple">
+            <i class="fas fa-mortar-pestle"></i>
+        </div>
+        <div class="pdm-kpi-info">
+            <span class="pdm-kpi-title">Fórmulas / Velas</span>
+            <span class="pdm-kpi-value">@ViewBag.TotalReceitas</span>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Alerts -->
+@if (Model.Any())
+{
+    <div class="pdm-alert-box pdm-alert-danger" style="margin-bottom: 30px;">
+        <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem;"></i>
+        <div style="flex-grow: 1;">
+            <strong style="display: block; font-size: 0.95rem; margin-bottom: 4px;">Atenção: Insumos com estoque baixo!</strong>
+            <div style="font-size: 0.85rem; display: flex; flex-wrap: wrap; gap: 10px 15px;">
+                @foreach (var prod in Model.Take(4))
+                {
+                    var unitLabel = prod.UnidadeMedida.ToString().ToLower();
+                    <span>• @prod.Nome: <strong>@prod.QuantidadeEstoque.ToString("N3") @unitLabel</strong> (Mínimo: @prod.EstoqueMinimo.ToString("N3"))</span>
+                }
+                @if (Model.Count() > 4)
+                {
+                    <span>e mais @(Model.Count() - 4) insumo(s).</span>
+                }
+            </div>
+        </div>
+        <a href="/Admin/PDM/Produtos" class="pdm-btn pdm-btn-secondary pdm-btn-sm" style="background: rgba(239, 68, 68, 0.1); color: var(--pdm-danger); border: 1px solid rgba(239, 68, 68, 0.2);">
+            Ver Insumos
+        </a>
+    </div>
+}
+
+<!-- Charts Grid -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 40px; align-items: start;">
+    <!-- Chart 1: Revenue vs Costs -->
+    <div class="pdm-card">
+        <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.4rem; color: var(--pdm-dark);">Faturamento vs Custos de Produção (Últimos 6 meses)</h3>
+        <div style="height: 300px; position: relative;">
+            <canvas id="financeChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Chart 2: Top Selling Recipes -->
+    <div class="pdm-card">
+        <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.4rem; color: var(--pdm-dark);">Top 5 Velas Mais Vendidas</h3>
+        <div style="height: 300px; position: relative;">
+            <canvas id="topVelasChart"></canvas>
+            <div id="noSalesOverlay" style="position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; color: var(--pdm-muted); text-align: center; font-size: 0.9rem; padding: 20px; background-color: rgba(255,255,255,0.7);">
+                <i class="fas fa-chart-pie" style="font-size: 2.5rem; margin-bottom: 12px; color: #cbd5e1;"></i>
+                Nenhuma venda registrada para carregar o gráfico.
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions Panel -->
+<div class="pdm-card" style="margin-bottom: 30px;">
+    <h3 class="serif" style="margin-top: 0; margin-bottom: 20px; font-size: 1.4rem; color: var(--pdm-dark);">Acesso Rápido</h3>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <a href="/Admin/PDM/Venda/Registrar" class="pdm-btn pdm-btn-primary" style="flex: 1; min-width: 150px;">
+            <i class="fas fa-shopping-cart"></i> Nova Venda
+        </a>
+        <a href="/Admin/PDM/Producao/Registrar" class="pdm-btn pdm-btn-secondary" style="flex: 1; min-width: 150px;">
+            <i class="fas fa-hammer"></i> Produzir Vela
+        </a>
+        <a href="/Admin/PDM/Produto/Criar" class="pdm-btn pdm-btn-outline" style="flex: 1; min-width: 150px;">
+            <i class="fas fa-box"></i> Novo Insumo
+        </a>
+        <a href="/Admin/PDM/Fechamentos" class="pdm-btn pdm-btn-outline" style="flex: 1; min-width: 150px;">
+            <i class="fas fa-history"></i> Fechamento Estoque
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Chart 1: Finance Comparison (MoM)
+            const labelsMeses = @Html.Raw(ViewBag.RotulosMesesJson);
+            const vendasMensais = @Html.Raw(ViewBag.VendasMensaisJson);
+            const producaoMensal = @Html.Raw(ViewBag.ProducaoMensalJson);
+
+            const ctxFinance = document.getElementById('financeChart').getContext('2d');
+            new Chart(ctxFinance, {
+                type: 'bar',
+                data: {
+                    labels: labelsMeses,
+                    datasets: [
+                        {
+                            label: 'Faturamento (Vendas)',
+                            data: vendasMensais,
+                            backgroundColor: 'rgba(16, 185, 129, 0.75)', // Success Green
+                            borderColor: 'rgb(16, 185, 129)',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Custos de Produção',
+                            data: producaoMensal,
+                            backgroundColor: 'rgba(217, 119, 6, 0.75)', // Amber
+                            borderColor: 'rgb(217, 119, 6)',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart 2: Top Selling Velas
+            const topVelasData = @Html.Raw(ViewBag.TopVelasJson);
+            const topLabels = topVelasData.map(v => v.Nome);
+            const topValues = topVelasData.map(v => v.Quantidade);
+
+            if(topValues.length === 0) {
+                document.getElementById('noSalesOverlay').style.display = 'flex';
+            } else {
+                const ctxVelas = document.getElementById('topVelasChart').getContext('2d');
+                new Chart(ctxVelas, {
+                    type: 'doughnut',
+                    data: {
+                        labels: topLabels,
+                        datasets: [{
+                            data: topValues,
+                            backgroundColor: [
+                                '#f59e0b', // Amber
+                                '#10b981', // Emerald
+                                '#06b6d4', // Cyan
+                                '#8b5cf6', // Violet
+                                '#ec4899'  // Pink
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}
