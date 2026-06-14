@@ -24,10 +24,9 @@
 *.swp
 *.lp
 
-# Secret and configuration files
-# appsettings.json costuma ser versionado com placeholders, 
-# mas segredos reais devem ficar no appsettings.Development.json ou UserSecrets
-# appsettings.Development.json
+# Secret and configuration files (contém senhas de banco e SMTP)
+appsettings.json
+appsettings.Development.json
 
 # Tooling and bundling
 node_modules/
