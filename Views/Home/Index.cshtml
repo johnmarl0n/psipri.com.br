@@ -1,6 +1,6 @@
 @model IEnumerable<psipri.com.br.Models.BlogPost>
 @{
-    ViewData["Title"] = "Dra. Priscila Batista | Psicoterapia & Perícias";
+    ViewData["Title"] = "Psicóloga em Campinas - Dra. Priscila Batista";
 }
 
 <!-- Hero Section -->
@@ -66,7 +66,7 @@
             <p>Selecione a opção que melhor reflete a sua necessidade atual para receber orientações personalizadas.</p>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: start;">
+        <div class="needs-container-grid">
             <!-- Selector Buttons (Left) -->
             <div class="needs-selector-grid" style="grid-template-columns: 1fr;">
                 <button class="need-tag-btn active" data-need="ansiedade">
@@ -358,6 +358,43 @@
     "https://www.instagram.com/priscilapsi_/",
     "https://www.linkedin.com/in/priscila-batista-3983211b2/"
   ]
+}
+</script>
+
+<!-- Schema.org JSON-LD FAQ Page Structured Data -->
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@type": "FAQPage",
+  "mainEntity": [{
+    "@@type": "Question",
+    "name": "Como é a primeira sessão de psicoterapia?",
+    "acceptedAnswer": {
+      "@@type": "Answer",
+      "text": "A primeira sessão é um momento de acolhimento inicial. Serve para nos conhecermos, entender as suas principais angústias e traçar os objetivos iniciais para o processo clínico. Não se preocupe em saber \"o que falar\", eu conduzirei o diálogo com empatia e calma."
+    }
+  },{
+    "@@type": "Question",
+    "name": "Você atende por convênio médico?",
+    "acceptedAnswer": {
+      "@@type": "Answer",
+      "text": "Atendo de forma particular. No entanto, forneço nota fiscal completa com todos os dados técnicos necessários para que você solicite o reembolso integral ou parcial junto ao seu plano de saúde (Bradesco, SulAmérica, Amil, etc.), sob a modalidade de livre escolha."
+    }
+  },{
+    "@@type": "Question",
+    "name": "Como funciona a atuação do assistente técnico judicial?",
+    "acceptedAnswer": {
+      "@@type": "Answer",
+      "text": "Como assistente técnica, atuo em favor de uma das partes do processo (familiar, trabalhista ou civil). Realizo análise crítica do laudo do perito judicial, elaboro quesitos psicológicos norteadores, acompanho as avaliações quando permitido por lei e emito um parecer técnico final fundamentado cientificamente."
+    }
+  },{
+    "@@type": "Question",
+    "name": "Quanto tempo dura o tratamento psicoterápico?",
+    "acceptedAnswer": {
+      "@@type": "Answer",
+      "text": "O tempo de tratamento é subjetivo e varia conforme as demandas de cada paciente. A alta é decidida de forma conjunta entre terapeuta e paciente, à medida que os objetivos iniciais são alcançados e há melhora clínica perceptível na autonomia do indivíduo."
+    }
+  }]
 }
 </script>
 

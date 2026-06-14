@@ -55,6 +55,45 @@ namespace psipri.com.br.Controllers
         }
 
         /// <summary>
+        /// Action to dynamically generate sitemap.xml.
+        /// </summary>
+        [Route("sitemap.xml")]
+        public async Task<IActionResult> Sitemap()
+        {
+            var posts = await _context.BlogPosts
+                .Where(p => p.IsPublished)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+
+            var baseUrl = "https://psipri.com.br";
+            var sitemapBuilder = new System.Text.StringBuilder();
+            sitemapBuilder.AppendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            sitemapBuilder.AppendLine("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+
+            // Add main page
+            sitemapBuilder.AppendLine("  <url>");
+            sitemapBuilder.AppendLine($"    <loc>{baseUrl}/</loc>");
+            sitemapBuilder.AppendLine($"    <changefreq>weekly</changefreq>");
+            sitemapBuilder.AppendLine($"    <priority>1.0</priority>");
+            sitemapBuilder.AppendLine("  </url>");
+
+            // Add blog posts
+            foreach (var post in posts)
+            {
+                sitemapBuilder.AppendLine("  <url>");
+                sitemapBuilder.AppendLine($"    <loc>{baseUrl}/Home/Post/{post.Id}</loc>");
+                sitemapBuilder.AppendLine($"    <lastmod>{post.CreatedAt:yyyy-MM-dd}</lastmod>");
+                sitemapBuilder.AppendLine($"    <changefreq>monthly</changefreq>");
+                sitemapBuilder.AppendLine($"    <priority>0.8</priority>");
+                sitemapBuilder.AppendLine("  </url>");
+            }
+
+            sitemapBuilder.AppendLine("</urlset>");
+
+            return Content(sitemapBuilder.ToString(), "application/xml", System.Text.Encoding.UTF8);
+        }
+
+        /// <summary>
         /// Error page handler.
         /// </summary>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -4,20 +4,42 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     // --- Responsive Sidebar Toggle ---
-    const hamburger = document.querySelector(".pdm-hamburger");
-    const sidebar = document.querySelector(".pdm-sidebar");
-    
-    if (hamburger && sidebar) {
+    const hamburger = document.getElementById("pdmHamburger");
+    const sidebar   = document.getElementById("pdmSidebar");
+    const overlay   = document.getElementById("pdmOverlay");
+
+    function openSidebar() {
+        sidebar.classList.add("open");
+        overlay.classList.add("active");
+        document.body.style.overflow = "hidden"; // Prevent background scroll
+        hamburger.setAttribute("aria-expanded", "true");
+        hamburger.querySelector("i").className = "fas fa-times"; // X icon
+    }
+
+    function closeSidebar() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("active");
+        document.body.style.overflow = "";
+        hamburger.setAttribute("aria-expanded", "false");
+        hamburger.querySelector("i").className = "fas fa-bars";
+    }
+
+    if (hamburger && sidebar && overlay) {
         hamburger.addEventListener("click", (e) => {
             e.stopPropagation();
-            sidebar.classList.toggle("open");
+            sidebar.classList.contains("open") ? closeSidebar() : openSidebar();
         });
 
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener("click", (e) => {
-            if (sidebar.classList.contains("open") && !sidebar.contains(e.target) && !hamburger.contains(e.target)) {
-                sidebar.classList.remove("open");
-            }
+        // Close when clicking the overlay
+        overlay.addEventListener("click", closeSidebar);
+
+        // Auto-close when a nav link is clicked (critical for mobile usability)
+        sidebar.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth <= 1024) {
+                    closeSidebar();
+                }
+            });
         });
     }
 

@@ -114,6 +114,76 @@ p {
     z-index: 100;
 }
 
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.nav-logo img {
+    height: 60px;
+    display: block;
+    transition: var(--transition-fast);
+}
+
+.nav-logo img:hover {
+    transform: scale(1.02);
+}
+
+.mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 10px;
+    transition: var(--transition-fast);
+    z-index: 101;
+}
+
+.mobile-menu-toggle:hover {
+    color: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+.main-nav .nav-menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.main-nav .nav-menu li a {
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 600;
+    transition: var(--transition-fast);
+}
+
+.main-nav .nav-menu li a:hover {
+    color: var(--secondary-color);
+}
+
+.main-nav .nav-menu .navbar-nav {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
 .nav-link-admin {
     font-size: 0.85rem;
     opacity: 0.3;
@@ -135,20 +205,12 @@ p {
     color: var(--primary-color);
     transition: var(--transition-fast);
     font-weight: 600;
+    display: inline-block;
 }
 
 .btn-outline-discreet:hover {
     border-color: var(--primary-color);
     background-color: rgba(45, 62, 47, 0.05);
-}
-
-.main-nav ul {
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    margin: 0;
-    padding: 15px 0;
 }
 
 /* --- Hero Section --- */
@@ -304,6 +366,13 @@ section {
 /* --- Seção Interativa "Como se Sente Hoje?" --- */
 .needs-section {
     background-color: var(--bg-creme-dark);
+}
+
+.needs-container-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 40px;
+    align-items: start;
 }
 
 .needs-selector-grid {
@@ -621,5 +690,81 @@ section {
     }
     .about-content, .contact-form, .need-response-container {
         padding: 30px;
+    }
+    .needs-container-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    /* Mobile Navigation */
+    .mobile-menu-toggle {
+        display: block;
+    }
+
+    .main-nav .nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(253, 253, 251, 0.96);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 30px;
+        box-sizing: border-box;
+        border-bottom: 1px solid rgba(45, 62, 47, 0.08);
+        gap: 25px;
+        align-items: flex-start;
+        box-shadow: 0 15px 30px rgba(45, 62, 47, 0.05);
+        z-index: 99;
+    }
+
+    .main-nav .nav-menu.active {
+        display: flex;
+        animation: navSlideDown 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+
+    .main-nav .nav-menu li {
+        width: 100%;
+    }
+
+    .main-nav .nav-menu li a {
+        display: block;
+        padding: 8px 0;
+        font-size: 1.1rem;
+        border-bottom: 1px solid rgba(45, 62, 47, 0.04);
+    }
+
+    /* Nested Login Partial on Mobile */
+    .main-nav .nav-menu .navbar-nav {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 20px;
+        padding-top: 10px;
+    }
+
+    .main-nav .nav-menu .navbar-nav .nav-item {
+        width: 100%;
+    }
+
+    .main-nav .nav-menu .navbar-nav .btn-outline-discreet {
+        display: block;
+        text-align: center;
+        width: 100%;
+        padding: 14px 20px;
+        box-sizing: border-box;
+    }
+}
+
+@keyframes navSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

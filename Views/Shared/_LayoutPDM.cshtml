@@ -23,7 +23,7 @@
 
     <div class="pdm-wrapper">
         <!-- Sidebar -->
-        <aside class="pdm-sidebar">
+        <aside class="pdm-sidebar" id="pdmSidebar">
             <a href="/Admin/PDM" class="pdm-sidebar-logo" style="display: flex; flex-direction: column; align-items: center; padding: 20px 15px 15px; text-align: center; gap: 8px;">
                 <img src="~/images/logo_pingo_de_mel.png" alt="Pingo de Mel" style="width: 80px; height: 80px; object-fit: contain;" asp-append-version="true" />
                 <span style="font-size: 1.3rem; font-weight: 700; color: var(--pdm-dark); font-family: 'Cormorant Garamond', serif; letter-spacing: 0.5px;">Pingo de Mel</span>
@@ -97,18 +97,21 @@
             </div>
         </aside>
 
+        <!-- Mobile Overlay -->
+        <div class="pdm-overlay" id="pdmOverlay"></div>
+
         <!-- Main Content Wrapper -->
         <div class="pdm-content">
             <header class="pdm-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <button class="pdm-hamburger">
+                    <button class="pdm-hamburger" id="pdmHamburger" aria-label="Abrir menu" aria-expanded="false">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h1 class="serif">@ViewData["Title"]</h1>
                 </div>
                 
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <span style="font-size: 0.9rem; color: var(--pdm-muted);">Priscila Batista</span>
+                    <span class="pdm-user-label" style="font-size: 0.9rem; color: var(--pdm-muted);">Priscila Batista</span>
                     <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                         <button type="submit" class="pdm-btn pdm-btn-outline pdm-btn-sm" style="color: #e74c3c; border-color: rgba(231, 76, 60, 0.2);">
                             Sair

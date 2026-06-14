@@ -121,7 +121,7 @@
                                         <i class="fas fa-edit"></i>
                                     </a>
                                     
-                                    <form href="/Admin/PDM/Produto/Excluir/@produto.Id" method="post" onsubmit="return confirm('Deseja realmente excluir este produto?');" style="display: inline;">
+                                    <form action="/Admin/PDM/Produto/Excluir/@produto.Id" method="post" onsubmit="return confirm('Deseja realmente excluir este produto?');" style="display: inline;">
                                         @Html.AntiForgeryToken()
                                         <button type="submit" class="pdm-btn pdm-btn-danger pdm-btn-sm" style="padding: 6px 12px; font-size: 0.8rem;" title="Excluir">
                                             <i class="fas fa-trash"></i>

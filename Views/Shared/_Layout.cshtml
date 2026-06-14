@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- SEO Optimization -->
-    <title>@ViewData["Title"] - Psicóloga em Campinas | Clínica e Jurídica</title>
+    @if (ViewData["Title"]?.ToString() == "Psicóloga em Campinas - Dra. Priscila Batista")
+    {
+        <title>Psicóloga em Campinas - Dra. Priscila Batista | Psicoterapia &amp; Perícias</title>
+    }
+    else
+    {
+        <title>@ViewData["Title"] - Dra. Priscila Batista</title>
+    }
     <meta name="description" content="Dra. Priscila Batista - Psicóloga em Campinas especializada em Psicologia Clínica e Jurídica. Atendimento humanizado e perícias judiciais em Campinas e região." />
     <meta name="keywords" content="Psicóloga em Campinas, Psicologia em Campinas, Psicologia Clínica em Campinas, Psicologia Jurídica em Campinas, Perícia Psicológica Campinas, Dra Priscila Batista" />
     <link rel="canonical" href="https://psipri.com.br" />
@@ -22,13 +29,16 @@
 <body>
     <header>
         <nav class="main-nav">
-            <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
-                <a href="/" class="serif" style="text-decoration: none; color: var(--primary-color);">
-                    <img src="~/images/logo.svg" alt="Logo Priscila Batista" style="height: 60px;" asp-append-version="true" />
+            <div class="container nav-container">
+                <a href="/" class="serif nav-logo">
+                    <img src="~/images/logo.svg" alt="Logo Priscila Batista" asp-append-version="true" />
                 </a>
-                <ul>
-                    <li><a href="#sobre" style="text-decoration: none; color: var(--text-dark); font-weight: 600;">Sobre</a></li>
-                    <li><a href="#blog" style="text-decoration: none; color: var(--text-dark); font-weight: 600;">Blog</a></li>
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu principal" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#blog">Blog</a></li>
                     <partial name="_LoginPartial" />
                 </ul>
             </div>
