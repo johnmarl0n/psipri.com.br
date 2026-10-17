@@ -38,7 +38,7 @@ namespace psipri.com.br.Controllers
         }
 
         /// <summary>
-        /// Handles hero image upload.
+        /// Handles hero image upload with strict validation.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -46,8 +46,37 @@ namespace psipri.com.br.Controllers
         {
             if (heroFile != null && heroFile.Length > 0)
             {
-                var fileName = "hero_" + DateTime.Now.Ticks + Path.GetExtension(heroFile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", fileName);
+                // Max file size: 5MB
+                if (heroFile.Length > 5 * 1024 * 1024)
+                {
+                    TempData["Error"] = "A imagem selecionada excede o tamanho máximo permitido de 5MB.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // Allowed extensions allowlist
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+                var extension = Path.GetExtension(heroFile.FileName).ToLowerInvariant();
+                if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
+                {
+                    TempData["Error"] = "Formato de arquivo não permitido. Use imagens .jpg, .png ou .webp.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // MIME type check
+                if (!heroFile.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                {
+                    TempData["Error"] = "O arquivo enviado não é uma imagem válida.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+                if (!Directory.Exists(uploadsDir))
+                {
+                    Directory.CreateDirectory(uploadsDir);
+                }
+
+                var fileName = $"hero_{DateTime.UtcNow.Ticks}{extension}";
+                var filePath = Path.Combine(uploadsDir, fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {

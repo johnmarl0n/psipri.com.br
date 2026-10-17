@@ -33,6 +33,35 @@ namespace psipri.com.br.Controllers
             return 15.00m; // Default fallback
         }
 
+        // --- UTILITY: Validação de imagens enviadas ---
+        private bool ValidarImagemUpload(IFormFile? file, out string? errorMessage)
+        {
+            errorMessage = null;
+            if (file == null || file.Length == 0) return true;
+
+            if (file.Length > 5 * 1024 * 1024)
+            {
+                errorMessage = "A imagem excede o tamanho máximo permitido de 5MB.";
+                return false;
+            }
+
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+            var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+            if (string.IsNullOrEmpty(ext) || !allowedExtensions.Contains(ext))
+            {
+                errorMessage = "Formato de imagem não permitido. Use arquivos .jpg, .png ou .webp.";
+                return false;
+            }
+
+            if (!file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+            {
+                errorMessage = "O arquivo enviado não é uma imagem válida.";
+                return false;
+            }
+
+            return true;
+        }
+
         // ==========================================================================
         // 1. DASHBOARD & INDEX
         // ==========================================================================
@@ -149,6 +178,11 @@ namespace psipri.com.br.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProdutoCriar(PDMProduto produto, IFormFile? imagemFile)
         {
+            if (imagemFile != null && !ValidarImagemUpload(imagemFile, out var imgError))
+            {
+                ModelState.AddModelError("ImagemThumb", imgError!);
+            }
+
             if (ModelState.IsValid)
             {
                 if (imagemFile != null && imagemFile.Length > 0)
@@ -204,6 +238,11 @@ namespace psipri.com.br.Controllers
 
             // Check if price changed to record in history
             decimal precoAnterior = produto.PrecoCusto;
+
+            if (imagemFile != null && !ValidarImagemUpload(imagemFile, out var imgError))
+            {
+                ModelState.AddModelError("ImagemThumb", imgError!);
+            }
 
             if (ModelState.IsValid)
             {
@@ -365,6 +404,11 @@ namespace psipri.com.br.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReceitaCriar(PDMReceita receita, string[] produtoIds, string[] quantidades, IFormFile? imagemFile)
         {
+            if (imagemFile != null && !ValidarImagemUpload(imagemFile, out var imgError))
+            {
+                ModelState.AddModelError("ImagemThumb", imgError!);
+            }
+
             if (ModelState.IsValid)
             {
                 if (imagemFile != null && imagemFile.Length > 0)
@@ -440,6 +484,11 @@ namespace psipri.com.br.Controllers
             if (receita == null)
             {
                 return NotFound();
+            }
+
+            if (imagemFile != null && !ValidarImagemUpload(imagemFile, out var imgError))
+            {
+                ModelState.AddModelError("ImagemThumb", imgError!);
             }
 
             if (ModelState.IsValid)

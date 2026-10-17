@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using psipri.com.br.Services;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace psipri.com.br.Controllers
@@ -20,30 +22,36 @@ namespace psipri.com.br.Controllers
         }
 
         /// <summary>
-        /// Handles the contact form submission.
+        /// Handles the contact form submission with sanitization and rate limiting.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [EnableRateLimiting("ContactLimiter")]
         public async Task<IActionResult> Send(string name, string email, string message)
         {
-            if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(message))
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(message))
             {
                 return RedirectToAction("Index", "Home");
             }
 
-            string subject = $"Novo Contato do Site: {name}";
-            string body = $"<p><strong>Nome:</strong> {name}</p>" +
-                          $"<p><strong>E-mail:</strong> {email}</p>" +
-                          $"<p><strong>Mensagem:</strong><br/>{message}</p>";
+            // Sanitize inputs to prevent HTML/Script injection in email notifications
+            var safeName = HtmlEncoder.Default.Encode(name.Trim());
+            var safeEmail = HtmlEncoder.Default.Encode(email.Trim());
+            var safeMessage = HtmlEncoder.Default.Encode(message.Trim()).Replace("\n", "<br/>");
+
+            string subject = $"Novo Contato do Site: {safeName}";
+            string body = $"<p><strong>Nome:</strong> {safeName}</p>" +
+                          $"<p><strong>E-mail:</strong> {safeEmail}</p>" +
+                          $"<p><strong>Mensagem:</strong><br/>{safeMessage}</p>";
 
             try
             {
                 // Send email to the psychologist
-                string recipient = _config["EmailSettings:Recipient"] ?? _config["EmailSettings:Username"];
+                string recipient = _config["EmailSettings:Recipient"] 
+                    ?? _config["EmailSettings:Username"] 
+                    ?? "priscilabatista.dias@uol.com.br";
+
                 await _emailService.SendEmailAsync(recipient, subject, body);
-                
-                // Optional: Send auto-reply to the user
-                // await _emailService.SendEmailAsync(email, "Recebemos sua mensagem", "<p>Obrigada pelo contato. Em breve retornaremos.</p>");
                 
                 TempData["MessageSent"] = "Mensagem enviada com sucesso!";
             }

@@ -23,8 +23,15 @@ namespace psipri.com.br.Services
         /// </summary>
         public async Task SendEmailAsync(string email, string subject, string message)
         {
+            var username = _config["EmailSettings:Username"] 
+                ?? throw new InvalidOperationException("EmailSettings:Username não configurado.");
+            var host = _config["EmailSettings:Host"] 
+                ?? throw new InvalidOperationException("EmailSettings:Host não configurado.");
+            var password = _config["EmailSettings:Password"] 
+                ?? throw new InvalidOperationException("EmailSettings:Password não configurado.");
+
             var emailMessage = new MimeMessage();
-            emailMessage.From.Add(new MailboxAddress("Psipri Notificações", _config["EmailSettings:Username"]));
+            emailMessage.From.Add(new MailboxAddress("Psipri Notificações", username));
             emailMessage.To.Add(new MailboxAddress("", email));
             emailMessage.Subject = subject;
 
@@ -38,10 +45,8 @@ namespace psipri.com.br.Services
                 int port = int.Parse(_config["EmailSettings:Port"] ?? "465");
                 var security = port == 465 ? SecureSocketOptions.SslOnConnect : SecureSocketOptions.StartTls;
 
-                await client.ConnectAsync(_config["EmailSettings:Host"], port, security);
-                
-                await client.AuthenticateAsync(_config["EmailSettings:Username"], _config["EmailSettings:Password"]);
-                
+                await client.ConnectAsync(host, port, security);
+                await client.AuthenticateAsync(username, password);
                 await client.SendAsync(emailMessage);
                 await client.DisconnectAsync(true);
             }

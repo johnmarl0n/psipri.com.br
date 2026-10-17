@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 using psipri.com.br.Data;
 using psipri.com.br.Services;
 
@@ -20,7 +22,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// Configure Identity for secure authentication
+// Configure Identity for secure authentication with brute-force lockout
 builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
@@ -28,24 +30,60 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 8;
+
+    // Anti-Brute Force Protection
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Lockout.MaxFailedAccessAttempts = 5;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// Configure Cookies for the temporary URL (allowing HTTP)
+var isDevelopment = builder.Environment.IsDevelopment();
+
+// Configure Cookies for session management
 builder.Services.ConfigureApplicationCookie(options => {
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SecurePolicy = isDevelopment ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
 });
 
-// Configure Antiforgery to work with the temporary URL
+// Configure Antiforgery protection
 builder.Services.AddAntiforgery(options => {
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SecurePolicy = isDevelopment ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
 });
 
+// Configure Native Rate Limiter to protect against Brute Force & DoS
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    // Login rate limiter: Max 5 attempts per minute per IP address
+    options.AddPolicy("LoginLimiter", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+
+    // Contact form rate limiter: Max 3 submissions per 5 minutes per IP address
+    options.AddPolicy("ContactLimiter", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromMinutes(5),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -61,7 +99,7 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
         context.Database.Migrate();
 
-        // Seed Default User
+        // Seed Default User (only if not already created)
         var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
         var adminEmail = "priscilabatista.dias@uol.com.br";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
@@ -73,13 +111,8 @@ using (var scope = app.Services.CreateScope())
                 Email = adminEmail, 
                 EmailConfirmed = true 
             };
-            await userManager.CreateAsync(adminUser, "Pri@2024!");
-        }
-        else
-        {
-            // Update password to match the user's request
-            var token = await userManager.GeneratePasswordResetTokenAsync(adminUser);
-            await userManager.ResetPasswordAsync(adminUser, token, "Pri@2024!");
+            var initialPass = builder.Configuration["AdminSeed:InitialPassword"] ?? "Pri@2024!";
+            await userManager.CreateAsync(adminUser, initialPass);
         }
 
         // Ensure ONLY this user exists (Apenas 1 usuário)
@@ -96,7 +129,7 @@ using (var scope = app.Services.CreateScope())
             heroSetting = new psipri.com.br.Models.SiteContent { Key = "HeroImage", Value = "/uploads/hero_priscila.jpg" };
             context.SiteContents.Add(heroSetting);
         }
-        else
+        else if (string.IsNullOrWhiteSpace(heroSetting.Value))
         {
             heroSetting.Value = "/uploads/hero_priscila.jpg";
             context.SiteContents.Update(heroSetting);
@@ -116,16 +149,29 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 else
 {
     app.UseDeveloperExceptionPage();
 }
 
-// app.UseHttpsRedirection();
+// Security Headers Middleware (Clickjacking, MIME Sniffing, Referrer Policy)
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Frame-Options", "SAMEORIGIN");
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    context.Response.Headers.Append("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    await next();
+});
+
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Rate Limiting Middleware
+app.UseRateLimiter();
 
 // Authentication and Authorization are critical for the maintenance area
 app.UseAuthentication();
@@ -149,7 +195,8 @@ app.MapControllerRoute(
 // Map Identity Razor Pages (for login/logout)
 app.MapRazorPages();
 
-app.MapGet("/Identity/Account/Register", context => {
+// Completely block all access to self-registration
+app.Map("/Identity/Account/Register", context => {
     context.Response.Redirect("/Identity/Account/Login");
     return Task.CompletedTask;
 });
