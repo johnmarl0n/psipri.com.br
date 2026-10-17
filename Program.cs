@@ -141,6 +141,63 @@ using (var scope = app.Services.CreateScope())
             heroSetting.Value = "/uploads/hero_priscila.jpg";
             context.SiteContents.Update(heroSetting);
         }
+
+        // Seed / Update AboutMe with complete professional biography and credentials
+        var aboutSetting = await context.SiteContents.FirstOrDefaultAsync(c => c.Key == "AboutMe");
+        string defaultAboutContent = @"<div class=""about-bio-lead"">
+    <h3 class=""serif"" style=""color: var(--primary-color); font-size: 1.8rem; margin-bottom: 18px; line-height: 1.3;"">
+        Acolhimento empático com sólido rigor técnico e científico
+    </h3>
+    <p style=""font-size: 1.05rem; line-height: 1.8; color: var(--text-dark); margin-bottom: 18px;"">
+        Sou <strong>Priscila Batista</strong> (CRP 06/159741), psicóloga clínica e jurídica. Minha prática profissional é fundamentada no compromisso ético de oferecer um espaço seguro, acolhedor e livre de julgamentos, onde cada pessoa possa compreender suas dores, ressignificar conflitos e desenvolver autonomia emocional.
+    </p>
+    <p style=""font-size: 1rem; line-height: 1.75; color: var(--text-muted); margin-bottom: 25px;"">
+        Na clínica individual, atuo com jovens e adultos no enfrentamento da ansiedade, depressão, síndrome do pânico, sobrecarga cotidiana e transições de vida. Paralelamente, como <strong>Assistente Técnica Pericial</strong>, atuo em demandas do Poder Judiciário, realizando perícias, formulação de quesitos e emissão de laudos técnicos pautados com rigor pelas resoluções do Conselho Federal de Psicologia.
+    </p>
+</div>
+
+<div class=""credentials-grid"">
+    <div class=""credential-item"">
+        <div class=""credential-icon""><i class=""fas fa-id-card""></i></div>
+        <div>
+            <strong>CRP 06/159741</strong>
+            <span>Registro profissional ativo no Conselho Regional de Psicologia de São Paulo (6ª Região).</span>
+        </div>
+    </div>
+    <div class=""credential-item"">
+        <div class=""credential-icon""><i class=""fas fa-brain""></i></div>
+        <div>
+            <strong>Psicoterapia Clínica</strong>
+            <span>Atendimento para jovens e adultos com práticas baseadas em evidências científicas.</span>
+        </div>
+    </div>
+    <div class=""credential-item"">
+        <div class=""credential-icon""><i class=""fas fa-balance-scale""></i></div>
+        <div>
+            <strong>Psicologia Jurídica & Perícia</strong>
+            <span>Assistência técnica judicial, elaboração de quesitos e pareceres fundamentados.</span>
+        </div>
+    </div>
+    <div class=""credential-item"">
+        <div class=""credential-icon""><i class=""fas fa-laptop-medical""></i></div>
+        <div>
+            <strong>Presencial & Online</strong>
+            <span>Consultório acolhedor em Campinas e teleconsultas seguras para todo o Brasil.</span>
+        </div>
+    </div>
+</div>";
+
+        if (aboutSetting == null)
+        {
+            aboutSetting = new psipri.com.br.Models.SiteContent { Key = "AboutMe", Value = defaultAboutContent };
+            context.SiteContents.Add(aboutSetting);
+        }
+        else if (string.IsNullOrWhiteSpace(aboutSetting.Value) || !aboutSetting.Value.Contains("06/159741"))
+        {
+            aboutSetting.Value = defaultAboutContent;
+            context.SiteContents.Update(aboutSetting);
+        }
+
         await context.SaveChangesAsync();
     }
     catch (Exception ex)

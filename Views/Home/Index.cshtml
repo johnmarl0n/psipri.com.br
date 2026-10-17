@@ -8,30 +8,33 @@
     <div class="container">
         <div class="hero-grid">
             <div class="hero-text">
-                <span style="text-transform: uppercase; letter-spacing: 3px; font-weight: 700; color: var(--secondary-color); font-size: 0.85rem; display: block; margin-bottom: 15px;">Psicoterapia & Perícia Psicológica</span>
+                <span style="text-transform: uppercase; letter-spacing: 3px; font-weight: 700; color: var(--secondary-color); font-size: 0.85rem; display: block; margin-bottom: 15px;">Psicoterapia & Perícia Psicológica • CRP 06/159741</span>
                 <h1>Acolhimento Humano e Rigor Técnico para o seu Bem-Estar</h1>
-                <p>Sou Priscila Batista, psicóloga clínica e jurídica. Ofereço um espaço seguro de escuta empática para superação de conflitos emocionais, além de assistência técnica especializada em demandas judiciais.</p>
+                <p>Sou <strong>Priscila Batista (CRP 06/159741)</strong>, psicóloga clínica e jurídica. Ofereço um espaço seguro de escuta empática para superação de conflitos emocionais, além de assistência técnica especializada em demandas judiciais.</p>
                 <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                     <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Dra. Priscila. Gostaria de receber informações sobre como funciona o atendimento.")" target="_blank" class="btn btn-whatsapp">
                         <i class="fab fa-whatsapp"></i> Agendar Consulta
                     </a>
-                    <a href="#atuacao" class="btn btn-outline">
-                        Conhecer Atuação
+                    <a href="#sobre" class="btn btn-outline">
+                        Conhecer a Dra. Priscila
                     </a>
-                    @if (!string.IsNullOrEmpty(ViewBag.InstitutionalVideoId))
-                    {
-                        <a href="#sobre-video" class="btn-video-hero" title="Assistir vídeo de apresentação">
-                            <span class="btn-video-icon"><i class="fas fa-play"></i></span>
-                            <span>Ver Apresentação</span>
-                        </a>
-                    }
                 </div>
             </div>
             <div class="hero-image-container">
                 <div class="hero-image-frame"></div>
                 <div class="hero-image">
-                    <img src="@(ViewBag.HeroImage ?? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800")" alt="Dra. Priscila Batista - Psicóloga em Campinas" />
+                    <img src="@(ViewBag.HeroImage ?? "/uploads/hero_priscila.jpg")" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800';" alt="Dra. Priscila Batista (CRP 06/159741) - Psicóloga em Campinas" />
                 </div>
+                @if (!string.IsNullOrEmpty(ViewBag.InstitutionalVideoEmbedUrl) || !string.IsNullOrEmpty(ViewBag.InstitutionalVideoId))
+                {
+                    <a href="#sobre" class="hero-video-floating-badge" title="Assistir vídeo de apresentação da Dra. Priscila">
+                        <span class="hero-play-pulse"><i class="fas fa-play"></i></span>
+                        <span class="hero-badge-info">
+                            <span class="hero-badge-title">Apresentação em Vídeo</span>
+                            <span class="hero-badge-sub">Conheça a psicóloga • 1 min</span>
+                        </span>
+                    </a>
+                }
             </div>
         </div>
     </div>
@@ -225,21 +228,86 @@
         <div class="section-title" style="margin-bottom: 45px;">
             <span style="text-transform: uppercase; letter-spacing: 3px; font-weight: 700; color: var(--secondary-color); font-size: 0.85rem; display: block; margin-bottom: 12px;">Conheça a Profissional</span>
             <h2>Sobre a Dra. Priscila Batista</h2>
-            <p>Trajetória ética, acolhimento humanizado e sólida atuação clínica e jurídica.</p>
+            <p>Dra. Priscila Batista • CRP 06/159741 — Trajetória ética, acolhimento humanizado e sólida atuação clínica e jurídica em Campinas e online.</p>
         </div>
 
-        @if (!string.IsNullOrEmpty(ViewBag.InstitutionalVideoId))
+        @{
+            var hasVideo = !string.IsNullOrEmpty(ViewBag.InstitutionalVideoEmbedUrl) || !string.IsNullOrEmpty(ViewBag.InstitutionalVideoId);
+            var isVertical = (ViewBag.InstitutionalVideoAspectRatio as string) != "horizontal";
+            var embedUrl = (string?)(ViewBag.InstitutionalVideoEmbedUrl) ?? $"https://www.youtube-nocookie.com/embed/{ViewBag.InstitutionalVideoId}?rel=0&modestbranding=1";
+            var provider = (string?)(ViewBag.InstitutionalVideoProvider) ?? "YouTube";
+            var rawVideoUrl = (string?)(ViewBag.InstitutionalVideoUrl);
+        }
+
+        @if (hasVideo && isVertical)
         {
-            <div id="sobre-video" class="institutional-video-wrapper" style="max-width: 900px; margin: 0 auto 50px;">
-                <div class="institutional-video-card">
-                    <div class="institutional-video-header">
-                        <span class="video-badge"><i class="fas fa-play-circle"></i> Apresentação em Vídeo</span>
-                        <h3 class="serif" style="margin: 8px 0 6px; font-size: 1.6rem; color: var(--primary-color);">Um Convite ao Cuidado & Acolhimento</h3>
-                        <p class="video-subtext">Assista à mensagem da psicóloga e conheça como funciona o espaço terapêutico e a assistência técnica.</p>
+            <!-- Layout Lado a Lado (Reels / Shorts Vertical 9:16 + Biografia Completa) -->
+            <div class="about-grid-wrapper">
+                <!-- Coluna da Esquerda: Vídeo Vertical em Moldura de Smartphone -->
+                <div class="about-media-col">
+                    <div id="sobre-video" class="institutional-video-wrapper is-vertical">
+                        <div class="institutional-video-card card-vertical">
+                            <div class="institutional-video-header">
+                                <span class="video-badge">
+                                    <i class="@(provider == "Instagram" ? "fab fa-instagram" : "fab fa-youtube")"></i> 
+                                    @(provider == "Instagram" ? "Instagram Reel" : "YouTube Shorts")
+                                </span>
+                                <h3 class="serif" style="margin: 8px 0 4px; font-size: 1.35rem; color: var(--primary-color);">Um Convite ao Cuidado</h3>
+                                <p class="video-subtext" style="font-size: 0.85rem; margin-top: 2px;">Assista à mensagem da Dra. Priscila</p>
+                            </div>
+
+                            <div class="video-responsive-container ratio-vertical">
+                                <iframe 
+                                    src="@embedUrl" 
+                                    title="Vídeo de Apresentação Institucional - Dra. Priscila Batista" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                                    allowfullscreen 
+                                    loading="lazy">
+                                </iframe>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(rawVideoUrl))
+                            {
+                                <div style="text-align: center;">
+                                    <a href="@rawVideoUrl" target="_blank" rel="noopener noreferrer" class="video-external-pill" title="Assistir no @provider">
+                                        <i class="@(provider == "Instagram" ? "fab fa-instagram" : "fab fa-youtube")"></i>
+                                        <span>Assistir no @provider</span>
+                                    </a>
+                                </div>
+                            }
+                        </div>
                     </div>
-                    <div class="video-responsive-container">
+                </div>
+
+                <!-- Coluna da Direita: Biografia e Credenciais -->
+                <div class="about-text-col">
+                    <div class="about-content">
+                        @Html.Raw(ViewBag.AboutContent)
+                    </div>
+
+                    <div class="about-cta-box">
+                        <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Dra. Priscila. Gostaria de receber informações sobre como funciona o atendimento.")" target="_blank" class="btn btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Conversar com a Dra. Priscila
+                        </a>
+                        <span class="about-cta-note"><i class="fas fa-user-shield"></i> Atendimento estritamente sigiloso e ético</span>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (hasVideo && !isVertical)
+        {
+            <!-- Layout Horizontal (16:9) Tradicional -->
+            <div id="sobre-video" class="institutional-video-wrapper is-horizontal" style="margin-bottom: 45px;">
+                <div class="institutional-video-card card-horizontal">
+                    <div class="institutional-video-header">
+                        <span class="video-badge"><i class="fas fa-play-circle"></i> Vídeo Institucional</span>
+                        <h3 class="serif" style="margin: 8px 0 6px; font-size: 1.6rem; color: var(--primary-color);">Um Convite ao Cuidado & Acolhimento</h3>
+                        <p class="video-subtext">Assista à mensagem da Dra. Priscila e conheça como funciona o espaço terapêutico e a assistência técnica.</p>
+                    </div>
+                    <div class="video-responsive-container ratio-horizontal">
                         <iframe 
-                            src="https://www.youtube-nocookie.com/embed/@(ViewBag.InstitutionalVideoId)?rel=0&modestbranding=1" 
+                            src="@embedUrl" 
                             title="Vídeo de Apresentação Institucional - Dra. Priscila Batista" 
                             frameborder="0" 
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
@@ -249,11 +317,30 @@
                     </div>
                 </div>
             </div>
-        }
 
-        <div class="about-content" style="max-width: 900px; margin: 0 auto;">
-            @Html.Raw(ViewBag.AboutContent)
-        </div>
+            <div class="about-content" style="max-width: 900px; margin: 0 auto;">
+                @Html.Raw(ViewBag.AboutContent)
+                <div class="about-cta-box" style="margin-top: 30px;">
+                    <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Dra. Priscila. Gostaria de receber informações sobre como funciona o atendimento.")" target="_blank" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Conversar com a Dra. Priscila
+                    </a>
+                    <span class="about-cta-note"><i class="fas fa-user-shield"></i> Atendimento estritamente sigiloso e ético</span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Apenas Biografia (Quando nenhum vídeo estiver cadastrado) -->
+            <div class="about-content" style="max-width: 900px; margin: 0 auto;">
+                @Html.Raw(ViewBag.AboutContent)
+                <div class="about-cta-box" style="margin-top: 35px;">
+                    <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Dra. Priscila. Gostaria de receber informações sobre como funciona o atendimento.")" target="_blank" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Conversar com a Dra. Priscila
+                    </a>
+                    <span class="about-cta-note"><i class="fas fa-user-shield"></i> Atendimento estritamente sigiloso e ético</span>
+                </div>
+            </div>
+        }
     </div>
 </section>
 
@@ -358,7 +445,7 @@
 {
   "@@context": "https://schema.org",
   "@@type": "ProfessionalService",
-  "name": "Dra. Priscila Batista - Psicologia Clínica e Jurídica em Campinas",
+  "name": "Dra. Priscila Batista - Psicologia Clínica e Jurídica em Campinas (CRP 06/159741)",
   "image": "https://psipri.com.br/images/logo.svg",
   "@@id": "https://psipri.com.br",
   "url": "https://psipri.com.br",

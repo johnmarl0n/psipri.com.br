@@ -1,12 +1,13 @@
 @{
     ViewData["Title"] = "Vídeo Institucional";
     Layout = "_LayoutAdmin";
+    var currentAspect = (ViewBag.AspectRatio as string) ?? "vertical";
 }
 
 <div class="admin-header-flex" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 15px;">
     <div>
         <h1 class="serif" style="margin-bottom: 5px;">Vídeo Institucional</h1>
-        <p style="color: var(--text-muted); margin: 0;">Configure o vídeo de apresentação institucional exibido na página inicial.</p>
+        <p style="color: var(--text-muted); margin: 0;">Configure o vídeo de apresentação institucional exibido na página inicial (suporte a YouTube Shorts, Instagram Reels e vídeos tradicionais).</p>
     </div>
     <a asp-action="Index" class="btn" style="background: #eee; color: var(--text-dark); padding: 12px 24px;">
         <i class="fas fa-arrow-left"></i> Voltar ao Painel
@@ -34,17 +35,20 @@
     </div>
 }
 
-<!-- Info Card: Recomendações YouTube Não Listado -->
-<div style="background: #f8f9fa; border: 1px solid rgba(45, 62, 47, 0.12); border-left: 4px solid var(--secondary-color); border-radius: 12px; padding: 20px 25px; margin-bottom: 35px;">
-    <div style="display: flex; align-items: flex-start; gap: 15px;">
-        <i class="fab fa-youtube" style="font-size: 1.8rem; color: #cc181e; margin-top: 3px;"></i>
+<!-- Info Card: Recomendações e Formatos -->
+<div style="background: #f8f9fa; border: 1px solid rgba(45, 62, 47, 0.12); border-left: 4px solid var(--secondary-color); border-radius: 14px; padding: 22px 26px; margin-bottom: 35px;">
+    <div style="display: flex; align-items: flex-start; gap: 16px;">
+        <div style="display: flex; gap: 8px; font-size: 1.8rem;">
+            <i class="fab fa-youtube" style="color: #cc181e;"></i>
+            <i class="fab fa-instagram" style="color: #e1306c;"></i>
+        </div>
         <div>
-            <h4 class="serif" style="margin: 0 0 8px; font-size: 1.2rem; color: var(--primary-color);">Dica para privacidade: Modo "Não Listado" (Unlisted)</h4>
+            <h4 class="serif" style="margin: 0 0 8px; font-size: 1.2rem; color: var(--primary-color);">Compatível com YouTube (Shorts & Padrão) e Instagram (Reels)</h4>
             <p style="font-size: 0.92rem; color: var(--text-muted); margin: 0 0 10px; line-height: 1.6;">
-                Ao publicar o vídeo no seu canal do YouTube, selecione a visibilidade como <strong>"Não Listado"</strong>. Dessa forma, ele <em>não</em> aparecerá nas buscas abertas do YouTube nem na página do canal, ficando reservado exclusivamente para os pacientes que visitarem o seu site.
+                Você pode cadastrar vídeos gravados no celular no formato <strong>Reels / Shorts (Vertical 9:16)</strong> ou vídeos de estúdio em <strong>Widescreen (Horizontal 16:9)</strong>.
             </p>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
-                <strong>Formatos aceitos:</strong> <code>https://www.youtube.com/watch?v=...</code>, <code>https://youtu.be/...</code> ou links compartilhados pelo aplicativo do celular.
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0; line-height: 1.5;">
+                <strong>Dica de privacidade no YouTube:</strong> Ao subir o vídeo no YouTube, selecione a visibilidade como <strong>"Não Listado"</strong> (Unlisted). O vídeo não aparecerá nas buscas abertas do YouTube, ficando exclusivo para quem visitar o site da Dra. Priscila.
             </p>
         </div>
     </div>
@@ -53,14 +57,16 @@
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 35px; align-items: start;">
     <!-- Formulário de Edição -->
     <div class="blog-card" style="padding: 30px;">
-        <h3 class="serif" style="margin-bottom: 15px; font-size: 1.4rem;">Configuração do Link</h3>
-        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 25px;">Cole o link do vídeo do YouTube abaixo. A alteração refletirá imediatamente na página inicial.</p>
+        <h3 class="serif" style="margin-bottom: 15px; font-size: 1.4rem;">Configuração do Vídeo</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 25px;">Cole o link do YouTube ou do Instagram e selecione o formato de exibição.</p>
 
         <form asp-action="UpdateVideo" method="post" id="videoForm">
             @Html.AntiForgeryToken()
-            <div class="form-group" style="margin-bottom: 25px;">
-                <label for="videoUrlInput" style="display: block; font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; color: var(--text-dark);">
-                    Link do Vídeo no YouTube
+
+            <!-- Campo de URL -->
+            <div class="form-group" style="margin-bottom: 22px;">
+                <label for="videoUrlInput" style="display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; color: var(--text-dark);">
+                    Link do Vídeo
                 </label>
                 <div style="position: relative;">
                     <input 
@@ -68,18 +74,50 @@
                         name="videoUrl" 
                         id="videoUrlInput" 
                         value="@ViewBag.VideoUrl" 
-                        placeholder="Ex: https://youtu.be/AbCdEf12345"
+                        placeholder="Ex: https://youtube.com/shorts/... ou https://instagram.com/reel/..."
                         style="width: 100%; padding: 14px 16px 14px 44px; border-radius: 12px; border: 1px solid #ccc; font-size: 0.95rem; box-sizing: border-box; font-family: 'Inter', sans-serif;" 
                         autocomplete="off"
                     />
-                    <i class="fab fa-youtube" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #cc181e; font-size: 1.1rem;"></i>
+                    <i id="providerIcon" class="fas fa-video" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--secondary-color); font-size: 1.1rem;"></i>
                 </div>
-                <small id="urlFeedback" style="display: block; margin-top: 8px; font-size: 0.82rem; color: var(--text-muted);"></small>
+                <small id="urlFeedback" style="display: block; margin-top: 8px; font-size: 0.84rem; color: var(--text-muted);"></small>
+            </div>
+
+            <!-- Seletor de Formato / Proporção -->
+            <div class="form-group" style="margin-bottom: 28px;">
+                <label style="display: block; font-weight: 600; margin-bottom: 10px; font-size: 0.95rem; color: var(--text-dark);">
+                    Formato de Exibição no Site
+                </label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 2px solid @(currentAspect == "vertical" ? "var(--secondary-color)" : "#e2e8f0"); background: @(currentAspect == "vertical" ? "rgba(166, 139, 92, 0.08)" : "#ffffff"); cursor: pointer; transition: all 0.2s;" id="labelAspectVertical">
+                        <input type="radio" name="aspectRatio" value="vertical" id="aspectVertical" @(currentAspect == "vertical" ? "checked" : "") style="margin: 0; cursor: pointer;" />
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.92rem; color: var(--primary-color);">
+                                <i class="fas fa-mobile-alt" style="color: var(--secondary-color); margin-right: 4px;"></i> Vertical (9:16)
+                            </div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                                Estilo Reels / Shorts / Celular
+                            </div>
+                        </div>
+                    </label>
+
+                    <label style="display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 2px solid @(currentAspect == "horizontal" ? "var(--secondary-color)" : "#e2e8f0"); background: @(currentAspect == "horizontal" ? "rgba(166, 139, 92, 0.08)" : "#ffffff"); cursor: pointer; transition: all 0.2s;" id="labelAspectHorizontal">
+                        <input type="radio" name="aspectRatio" value="horizontal" id="aspectHorizontal" @(currentAspect == "horizontal" ? "checked" : "") style="margin: 0; cursor: pointer;" />
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.92rem; color: var(--primary-color);">
+                                <i class="fas fa-tv" style="color: var(--secondary-color); margin-right: 4px;"></i> Horizontal (16:9)
+                            </div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">
+                                Widescreen Tradicional
+                            </div>
+                        </div>
+                    </label>
+                </div>
             </div>
 
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
                 <button type="submit" class="btn btn-primary-site" style="padding: 14px 28px;">
-                    <i class="fas fa-save"></i> Salvar Vídeo
+                    <i class="fas fa-save"></i> Salvar Configurações
                 </button>
                 <a asp-action="Index" class="btn btn-outline" style="padding: 14px 24px;">Cancelar</a>
             </div>
@@ -101,27 +139,32 @@
     </div>
 
     <!-- Pré-visualização Dinâmica -->
-    <div class="blog-card" style="padding: 30px;">
-        <h3 class="serif" style="margin-bottom: 10px; font-size: 1.4rem;">Pré-visualização do Vídeo</h3>
-        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Veja como o player será exibido para os visitantes do site:</p>
+    <div class="blog-card" style="padding: 30px; text-align: center;">
+        <div style="text-align: left; margin-bottom: 20px;">
+            <h3 class="serif" style="margin-bottom: 6px; font-size: 1.4rem;">Pré-visualização ao Vivo</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">Veja exatamente como o player se adaptará na página inicial:</p>
+        </div>
 
-        <!-- Player Container -->
-        <div id="previewContainer" style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 14px; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.12); display: none;">
-            <iframe 
-                id="previewIframe" 
-                src="" 
-                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>
+        <!-- Preview Wrapper -->
+        <div id="previewCardWrapper" style="display: none; margin: 0 auto; max-width: @(currentAspect == "vertical" ? "320px" : "100%"); transition: max-width 0.3s ease;">
+            <div id="previewContainer" style="position: relative; width: 100%; border-radius: 18px; overflow: hidden; background: #000; box-shadow: 0 15px 35px rgba(0,0,0,0.18);">
+                <iframe 
+                    id="previewIframe" 
+                    src="" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+            <div id="previewFormatBadge" style="margin-top: 14px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;"></div>
         </div>
 
         <!-- Placeholder when empty -->
-        <div id="previewPlaceholder" style="text-align: center; padding: 50px 20px; background: #fafafa; border: 2px dashed #ddd; border-radius: 14px;">
-            <i class="fas fa-play-circle" style="font-size: 3rem; color: #ccc; margin-bottom: 15px;"></i>
+        <div id="previewPlaceholder" style="text-align: center; padding: 60px 20px; background: #fafafa; border: 2px dashed #ddd; border-radius: 14px;">
+            <i class="fas fa-play-circle" style="font-size: 3.5rem; color: #ccc; margin-bottom: 15px;"></i>
             <h4 class="serif" style="color: var(--text-dark); margin-bottom: 8px;">Nenhum vídeo em exibição</h4>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0; max-width: 320px; margin: 0 auto;">
-                Cole o link do YouTube no formulário ao lado para carregar a prévia do player aqui em tempo real.
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin: 0; max-width: 320px; margin: 0 auto; line-height: 1.5;">
+                Cole o link do YouTube ou do Instagram no formulário ao lado para carregar a prévia do player aqui em tempo real.
             </p>
         </div>
     </div>
@@ -131,18 +174,27 @@
     <script>
         (function() {
             var input = document.getElementById('videoUrlInput');
+            var providerIcon = document.getElementById('providerIcon');
+            var previewCardWrapper = document.getElementById('previewCardWrapper');
             var previewContainer = document.getElementById('previewContainer');
             var previewIframe = document.getElementById('previewIframe');
             var previewPlaceholder = document.getElementById('previewPlaceholder');
+            var previewFormatBadge = document.getElementById('previewFormatBadge');
             var feedback = document.getElementById('urlFeedback');
 
-            var initialVideoId = '@(ViewBag.VideoId ?? "")';
+            var radioVertical = document.getElementById('aspectVertical');
+            var radioHorizontal = document.getElementById('aspectHorizontal');
+            var labelVertical = document.getElementById('labelAspectVertical');
+            var labelHorizontal = document.getElementById('labelAspectHorizontal');
 
-            function extractYouTubeId(url) {
+            var initialVideoUrl = '@(ViewBag.VideoUrl ?? "")';
+            var initialEmbedUrl = '@(ViewBag.VideoEmbedUrl ?? "")';
+
+            function parseVideo(url) {
                 if (!url) return null;
                 url = url.trim();
 
-                // Iframe check
+                // Check iframe
                 if (url.indexOf('<iframe') !== -1) {
                     var matchIframe = url.match(/src=["']([^"']+)["']/i);
                     if (matchIframe && matchIframe[1]) {
@@ -150,48 +202,148 @@
                     }
                 }
 
-                // Direct 11-char ID
-                if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
-                    return url;
+                // Instagram Reel / Post
+                var igMatch = url.match(/(?:instagram\.com\/(?:reel|reels|p|tv)\/)([a-zA-Z0-9_-]+)/i);
+                if (igMatch && igMatch[1]) {
+                    return {
+                        provider: 'Instagram',
+                        id: igMatch[1],
+                        embedUrl: 'https://www.instagram.com/reel/' + igMatch[1] + '/embed/',
+                        isShortOrReel: true
+                    };
                 }
 
-                var match = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/\s]{11})/i);
-                return (match && match[1]) ? match[1] : null;
+                // YouTube Shorts
+                var ytShorts = url.match(/youtube\.com\/shorts\/([^"&?\/\s]{11})/i);
+                if (ytShorts && ytShorts[1]) {
+                    return {
+                        provider: 'YouTube',
+                        id: ytShorts[1],
+                        embedUrl: 'https://www.youtube-nocookie.com/embed/' + ytShorts[1] + '?rel=0&modestbranding=1',
+                        isShortOrReel: true
+                    };
+                }
+
+                // Direct 11-char ID (YouTube)
+                if (/^[a-zA-Z0-9_-]{11}$/.test(url)) {
+                    return {
+                        provider: 'YouTube',
+                        id: url,
+                        embedUrl: 'https://www.youtube-nocookie.com/embed/' + url + '?rel=0&modestbranding=1',
+                        isShortOrReel: false
+                    };
+                }
+
+                // YouTube Standard / watch / youtu.be
+                var ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+                if (ytMatch && ytMatch[1]) {
+                    return {
+                        provider: 'YouTube',
+                        id: ytMatch[1],
+                        embedUrl: 'https://www.youtube-nocookie.com/embed/' + ytMatch[1] + '?rel=0&modestbranding=1',
+                        isShortOrReel: false
+                    };
+                }
+
+                return null;
             }
 
-            function updatePreview() {
-                var url = input.value.trim();
-                var videoId = extractYouTubeId(url);
+            function updateAspectUi(aspect) {
+                if (aspect === 'vertical') {
+                    radioVertical.checked = true;
+                    labelVertical.style.borderColor = 'var(--secondary-color)';
+                    labelVertical.style.background = 'rgba(166, 139, 92, 0.08)';
+                    labelHorizontal.style.borderColor = '#e2e8f0';
+                    labelHorizontal.style.background = '#ffffff';
 
-                if (videoId) {
-                    var embedUrl = 'https://www.youtube-nocookie.com/embed/' + videoId + '?rel=0&modestbranding=1';
-                    if (previewIframe.src !== embedUrl) {
-                        previewIframe.src = embedUrl;
+                    previewCardWrapper.style.maxWidth = '320px';
+                    previewContainer.style.paddingBottom = '177.78%'; // 9:16
+                    previewContainer.style.border = '4px solid #1a1a1a';
+                    previewContainer.style.borderRadius = '24px';
+                    previewFormatBadge.innerHTML = '<i class="fas fa-mobile-alt"></i> Formato Vertical (Reels / Shorts 9:16)';
+                } else {
+                    radioHorizontal.checked = true;
+                    labelHorizontal.style.borderColor = 'var(--secondary-color)';
+                    labelHorizontal.style.background = 'rgba(166, 139, 92, 0.08)';
+                    labelVertical.style.borderColor = '#e2e8f0';
+                    labelVertical.style.background = '#ffffff';
+
+                    previewCardWrapper.style.maxWidth = '100%';
+                    previewContainer.style.paddingBottom = '56.25%'; // 16:9
+                    previewContainer.style.border = '0';
+                    previewContainer.style.borderRadius = '14px';
+                    previewFormatBadge.innerHTML = '<i class="fas fa-tv"></i> Formato Widescreen (16:9 Tradicional)';
+                }
+            }
+
+            function updatePreview(autoDetectAspect) {
+                var url = input.value.trim();
+                var info = parseVideo(url);
+
+                if (info) {
+                    if (previewIframe.src !== info.embedUrl) {
+                        previewIframe.src = info.embedUrl;
                     }
-                    previewContainer.style.display = 'block';
+
+                    if (info.provider === 'Instagram') {
+                        providerIcon.className = 'fab fa-instagram';
+                        providerIcon.style.color = '#e1306c';
+                        feedback.innerHTML = '<span style="color: #1e7e34;"><i class="fas fa-check-circle"></i> Instagram Reel identificado: <strong>' + info.id + '</strong></span>';
+                    } else if (info.isShortOrReel) {
+                        providerIcon.className = 'fab fa-youtube';
+                        providerIcon.style.color = '#cc181e';
+                        feedback.innerHTML = '<span style="color: #1e7e34;"><i class="fas fa-check-circle"></i> YouTube Shorts identificado: <strong>' + info.id + '</strong></span>';
+                    } else {
+                        providerIcon.className = 'fab fa-youtube';
+                        providerIcon.style.color = '#cc181e';
+                        feedback.innerHTML = '<span style="color: #1e7e34;"><i class="fas fa-check-circle"></i> YouTube Vídeo identificado: <strong>' + info.id + '</strong></span>';
+                    }
+
+                    if (autoDetectAspect && info.isShortOrReel) {
+                        updateAspectUi('vertical');
+                    } else {
+                        var currentAspect = radioHorizontal.checked ? 'horizontal' : 'vertical';
+                        updateAspectUi(currentAspect);
+                    }
+
+                    previewCardWrapper.style.display = 'block';
                     previewPlaceholder.style.display = 'none';
-                    feedback.innerHTML = '<span style="color: #1e7e34;"><i class="fas fa-check-circle"></i> ID identificado: <strong>' + videoId + '</strong></span>';
                 } else if (url.length > 0) {
-                    previewContainer.style.display = 'none';
+                    providerIcon.className = 'fas fa-video';
+                    providerIcon.style.color = '#c5221f';
+                    previewCardWrapper.style.display = 'none';
                     previewIframe.src = '';
                     previewPlaceholder.style.display = 'block';
-                    feedback.innerHTML = '<span style="color: #c5221f;"><i class="fas fa-exclamation-triangle"></i> Link não reconhecido como vídeo do YouTube. Verifique o endereço.</span>';
+                    feedback.innerHTML = '<span style="color: #c5221f;"><i class="fas fa-exclamation-triangle"></i> Link não reconhecido. Use links do YouTube (vídeos ou Shorts) ou do Instagram (Reels).</span>';
                 } else {
-                    previewContainer.style.display = 'none';
+                    providerIcon.className = 'fas fa-video';
+                    providerIcon.style.color = 'var(--secondary-color)';
+                    previewCardWrapper.style.display = 'none';
                     previewIframe.src = '';
                     previewPlaceholder.style.display = 'block';
                     feedback.innerHTML = '';
                 }
             }
 
-            input.addEventListener('input', updatePreview);
+            input.addEventListener('input', function() { updatePreview(true); });
             input.addEventListener('paste', function() {
-                setTimeout(updatePreview, 100);
+                setTimeout(function() { updatePreview(true); }, 100);
+            });
+
+            radioVertical.addEventListener('change', function() {
+                updateAspectUi('vertical');
+            });
+            radioHorizontal.addEventListener('change', function() {
+                updateAspectUi('horizontal');
             });
 
             // Initial load
-            if (initialVideoId) {
-                updatePreview();
+            if (initialVideoUrl) {
+                var aspect = radioHorizontal.checked ? 'horizontal' : 'vertical';
+                updateAspectUi(aspect);
+                updatePreview(false);
+            } else {
+                updateAspectUi('vertical');
             }
         })();
     </script>

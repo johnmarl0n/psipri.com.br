@@ -37,8 +37,13 @@ namespace psipri.com.br.Controllers
 
             // Fetch Institutional Video
             var video = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+            var videoAspect = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoAspectRatio");
+
             ViewBag.InstitutionalVideoUrl = video?.Value;
             ViewBag.InstitutionalVideoId = YouTubeHelper.ExtractVideoId(video?.Value);
+            ViewBag.InstitutionalVideoEmbedUrl = YouTubeHelper.GetEmbedUrl(video?.Value);
+            ViewBag.InstitutionalVideoProvider = YouTubeHelper.GetProvider(video?.Value);
+            ViewBag.InstitutionalVideoAspectRatio = videoAspect?.Value ?? (YouTubeHelper.IsLikelyVertical(video?.Value) ? "vertical" : "vertical");
 
             // Fetch latest 3 published blog posts
             var posts = await _context.BlogPosts

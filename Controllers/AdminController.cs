@@ -31,8 +31,12 @@ namespace psipri.com.br.Controllers
             ViewBag.HeroImage = heroImage?.Value ?? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
 
             var videoSetting = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+            var videoAspect = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoAspectRatio");
             ViewBag.InstitutionalVideoUrl = videoSetting?.Value;
             ViewBag.InstitutionalVideoId = YouTubeHelper.ExtractVideoId(videoSetting?.Value);
+            ViewBag.InstitutionalVideoEmbedUrl = YouTubeHelper.GetEmbedUrl(videoSetting?.Value);
+            ViewBag.InstitutionalVideoProvider = YouTubeHelper.GetProvider(videoSetting?.Value);
+            ViewBag.InstitutionalVideoAspectRatio = videoAspect?.Value ?? (YouTubeHelper.IsLikelyVertical(videoSetting?.Value) ? "vertical" : "vertical");
 
             return View();
         }
@@ -227,44 +231,65 @@ namespace psipri.com.br.Controllers
         // --- Institutional Video Management ---
 
         /// <summary>
-        /// View for managing the institutional video link.
+        /// <summary>
+        /// View for managing the institutional video link and aspect ratio.
         /// </summary>
         public async Task<IActionResult> Video()
         {
             var video = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+            var aspect = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoAspectRatio");
+
             ViewBag.VideoUrl = video?.Value ?? "";
             ViewBag.VideoId = YouTubeHelper.ExtractVideoId(video?.Value);
+            ViewBag.VideoEmbedUrl = YouTubeHelper.GetEmbedUrl(video?.Value);
+            ViewBag.VideoProvider = YouTubeHelper.GetProvider(video?.Value);
+            ViewBag.AspectRatio = aspect?.Value ?? (YouTubeHelper.IsLikelyVertical(video?.Value) ? "vertical" : "vertical");
+
             return View();
         }
 
         /// <summary>
-        /// Updates the institutional video URL from YouTube.
+        /// Updates the institutional video URL and aspect ratio from YouTube or Instagram.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateVideo(string? videoUrl)
+        public async Task<IActionResult> UpdateVideo(string? videoUrl, string? aspectRatio)
         {
             if (string.IsNullOrWhiteSpace(videoUrl))
             {
-                var existing = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
-                if (existing != null)
+                var existingUrl = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+                if (existingUrl != null)
                 {
-                    _context.SiteContents.Remove(existing);
-                    await _context.SaveChangesAsync();
+                    _context.SiteContents.Remove(existingUrl);
                 }
+
+                var existingAspect = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoAspectRatio");
+                if (existingAspect != null)
+                {
+                    _context.SiteContents.Remove(existingAspect);
+                }
+
+                await _context.SaveChangesAsync();
                 TempData["Success"] = "Vídeo institucional removido do site!";
                 return RedirectToAction(nameof(Index));
             }
 
+            var embedUrl = YouTubeHelper.GetEmbedUrl(videoUrl);
             var videoId = YouTubeHelper.ExtractVideoId(videoUrl);
-            if (string.IsNullOrEmpty(videoId))
+
+            if (string.IsNullOrEmpty(embedUrl) || string.IsNullOrEmpty(videoId))
             {
-                ModelState.AddModelError("videoUrl", "Link do YouTube inválido. Certifique-se de colar uma URL válida do YouTube (ex: https://www.youtube.com/watch?v=... ou https://youtu.be/...).");
+                ModelState.AddModelError("videoUrl", "Link não reconhecido. Certifique-se de colar uma URL válida do YouTube (vídeo ou Shorts) ou do Instagram (Reel).");
                 ViewBag.VideoUrl = videoUrl;
                 ViewBag.VideoId = null;
+                ViewBag.VideoEmbedUrl = null;
+                ViewBag.AspectRatio = aspectRatio ?? "vertical";
                 return View("Video");
             }
 
+            var cleanAspect = (aspectRatio == "horizontal") ? "horizontal" : "vertical";
+
+            // Save or update URL
             var videoSetting = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
             if (videoSetting == null)
             {
@@ -277,8 +302,21 @@ namespace psipri.com.br.Controllers
                 _context.SiteContents.Update(videoSetting);
             }
 
+            // Save or update Aspect Ratio
+            var aspectSetting = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoAspectRatio");
+            if (aspectSetting == null)
+            {
+                aspectSetting = new SiteContent { Key = "InstitutionalVideoAspectRatio", Value = cleanAspect };
+                _context.SiteContents.Add(aspectSetting);
+            }
+            else
+            {
+                aspectSetting.Value = cleanAspect;
+                _context.SiteContents.Update(aspectSetting);
+            }
+
             await _context.SaveChangesAsync();
-            TempData["Success"] = "Vídeo institucional atualizado com sucesso!";
+            TempData["Success"] = "Vídeo institucional e formato de exibição salvos com sucesso!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -293,8 +331,15 @@ namespace psipri.com.br.Controllers
             if (video != null)
             {
                 _context.SiteContents.Remove(video);
-                await _context.SaveChangesAsync();
             }
+
+            var aspect = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoAspectRatio");
+            if (aspect != null)
+            {
+                _context.SiteContents.Remove(aspect);
+            }
+
+            await _context.SaveChangesAsync();
             TempData["Success"] = "Vídeo institucional removido com sucesso!";
             return RedirectToAction(nameof(Index));
         }
