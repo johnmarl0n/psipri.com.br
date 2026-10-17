@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.HttpOverrides;
 using System.Threading.RateLimiting;
 using psipri.com.br.Data;
 using psipri.com.br.Services;
@@ -8,6 +9,14 @@ using psipri.com.br.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // --- Configuration and Services ---
+
+// Configure Forwarded Headers for Cloudflare and reverse proxies (IIS ARR)
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // Register Email Service
 builder.Services.AddTransient<IEmailService, EmailService>();
@@ -38,21 +47,19 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => {
 })
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-var isDevelopment = builder.Environment.IsDevelopment();
-
-// Configure Cookies for session management
+// Configure Cookies for session management (SameAsRequest avoids SSL-termination mismatches on reverse proxy/Cloudflare)
 builder.Services.ConfigureApplicationCookie(options => {
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
     options.LoginPath = "/Identity/Account/Login";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
-    options.Cookie.SecurePolicy = isDevelopment ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
-// Configure Antiforgery protection
+// Configure Antiforgery protection (SameAsRequest ensures forms render when SSL is terminated at proxy/Cloudflare)
 builder.Services.AddAntiforgery(options => {
-    options.Cookie.SecurePolicy = isDevelopment ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
 });
 
 // Configure Native Rate Limiter to protect against Brute Force & DoS
@@ -145,11 +152,13 @@ using (var scope = app.Services.CreateScope())
 
 // --- HTTP Request Pipeline ---
 
+// Process forwarded headers from reverse proxy (Cloudflare / IIS ARR) first
+app.UseForwardedHeaders();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
-    app.UseHttpsRedirection();
 }
 else
 {

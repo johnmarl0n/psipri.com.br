@@ -105,6 +105,12 @@ namespace psipri.com.br.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
+            var exceptionFeature = HttpContext.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerPathFeature>();
+            if (exceptionFeature?.Error != null)
+            {
+                _logger.LogError(exceptionFeature.Error, "Unhandled exception on path: {Path}", exceptionFeature.Path);
+            }
+
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
