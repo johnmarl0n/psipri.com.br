@@ -13,6 +13,7 @@ Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, pr
 
 - **Design Premium & Acolhedor:** Estética elegante com paleta de cores curada em tons de verde oliva (`#2D3E2F`) e dourado fosco (`#A68B5C`), com sombras suaves e micro-animações interativas.
 - **Navegação Mobile Responsiva:** Menu hambúrguer com efeito *glassmorphism* (backdrop-filter blur), animação de slide-down e fechamento automático ao clicar em links âncora ou fora da área do menu.
+- **Vídeo Institucional de Apresentação:** Player responsivo (16:9) integrado de forma elegante na seção "Sobre a Profissional" (`#sobre`), com carregamento sob demanda (`loading="lazy"`), embed com privacidade avançada (`youtube-nocookie.com`) e botão de atalho *"Ver Apresentação"* no Hero com scroll suave. Exibição 100% condicional: oculta-se automaticamente quando não há vídeo configurado.
 - **Seletor Interativo ("Como posso te ajudar hoje?"):** Painel dinâmico em JavaScript que permite ao paciente clicar no sintoma/necessidade atual (Ansiedade, Relacionamento, Perícias, etc.) e visualizar uma mensagem empática com um botão de agendamento rápido via WhatsApp contendo texto personalizado. Layout agora responsivo em coluna única no mobile.
 - **Diferenciais da Profissional:** Seção visual em cards destacando "Escuta Acolhedora", "Embasamento Científico", "Sigilo Absoluto" e "Rigor Jurídico".
 - **FAQ Dinâmico:** Acordeão com as principais dúvidas sobre consultas, reembolso de planos de saúde e perícias técnicas.
@@ -30,6 +31,7 @@ Uma plataforma web robusta e elegante desenvolvida em **ASP.NET Core 8 MVC**, pr
 ### 3. Painel de Manutenção Administrativa
 
 - **Gestão de Conteúdo:** Edição dinâmica da biografia "Sobre" com suporte a Quill.js (imagens, vídeos e formatação rica) e alteração direta da foto principal (Hero) do site.
+- **Módulo de Vídeo Institucional:** Gestão dedicada para o vídeo do YouTube com parser inteligente multi-formato (`watch?v=`, `youtu.be/`, `/shorts/`, `embed/`, tags iframe e ID direto), pré-visualização em tempo real (live preview) antes de salvar e remoção/ocultação instantânea com confirmação de segurança.
 - **Gestão do Blog:** CRUD completo de artigos e publicações técnicas com redimensionamento de layouts responsivos.
 
 ### 4. Sistema Pingo de Mel (CRM, Estoque & Vendas) — Mobile First
@@ -92,6 +94,7 @@ dotnet publish -c Release
 
 | Data | Alteração |
 |------|-----------|
+| Out/2026 | Vídeo Institucional dinâmico: parser YouTube multi-formato, player responsivo 16:9 na seção "Sobre" com embed de privacidade e gestão completa com live preview no Admin |
 | Jun/2026 | Responsividade completa do painel PDM para mobile/tablet (3 breakpoints, overlay sidebar, scroll-lock) |
 | Jun/2026 | Correção do bug HTTP 405 na exclusão de produtos (atributo `href` → `action` no `<form>`) |
 | Jun/2026 | SEO: título otimizado para busca local, `FAQPage` JSON-LD, sitemap.xml dinâmico via controller |

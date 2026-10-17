@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using psipri.com.br.Data;
 using psipri.com.br.Models;
+using psipri.com.br.Services;
 using System.Diagnostics;
 
 namespace psipri.com.br.Controllers
@@ -33,6 +34,11 @@ namespace psipri.com.br.Controllers
             // Fetch Hero Image
             var hero = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "HeroImage");
             ViewBag.HeroImage = hero?.Value;
+
+            // Fetch Institutional Video
+            var video = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+            ViewBag.InstitutionalVideoUrl = video?.Value;
+            ViewBag.InstitutionalVideoId = YouTubeHelper.ExtractVideoId(video?.Value);
 
             // Fetch latest 3 published blog posts
             var posts = await _context.BlogPosts

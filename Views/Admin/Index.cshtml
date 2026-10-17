@@ -61,5 +61,37 @@
                 <span style="font-size: 0.75rem; opacity: 0.6;">Imagem atual: <a href="@ViewBag.HeroImage" target="_blank">Visualizar</a></span>
             </div>
         </div>
+
+        <!-- Institutional Video Card -->
+        <a asp-action="Video" style="text-decoration: none; color: inherit;">
+            <div class="blog-card" style="text-align: center; padding: 40px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; box-sizing: border-box;">
+                <div>
+                    <i class="fab fa-youtube" style="font-size: 3rem; color: #cc181e; margin-bottom: 20px;"></i>
+                    <h3 class="serif">Vídeo Institucional</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Vídeo de apresentação da Dra. Priscila exibido na página inicial.</p>
+                </div>
+                <div>
+                    @if (!string.IsNullOrEmpty(ViewBag.InstitutionalVideoId))
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(37, 211, 102, 0.12); color: #1e7e34; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
+                                <i class="fas fa-check-circle"></i> Ativo no Site
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div style="margin-bottom: 15px;">
+                            <span style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(45, 62, 47, 0.06); color: var(--text-muted); border-radius: 20px; font-size: 0.8rem; font-weight: 500;">
+                                <i class="fas fa-video-slash"></i> Nenhum vídeo configurado
+                            </span>
+                        </div>
+                    }
+                    <div class="btn btn-outline" style="width: 100%; padding: 12px; font-size: 0.9rem; box-sizing: border-box;">
+                        <i class="fas fa-cog"></i> Configurar Vídeo
+                    </div>
+                </div>
+            </div>
+        </a>
     </div>
 </div>

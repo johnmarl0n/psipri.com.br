@@ -11,13 +11,20 @@
                 <span style="text-transform: uppercase; letter-spacing: 3px; font-weight: 700; color: var(--secondary-color); font-size: 0.85rem; display: block; margin-bottom: 15px;">Psicoterapia & Perícia Psicológica</span>
                 <h1>Acolhimento Humano e Rigor Técnico para o seu Bem-Estar</h1>
                 <p>Sou Priscila Batista, psicóloga clínica e jurídica. Ofereço um espaço seguro de escuta empática para superação de conflitos emocionais, além de assistência técnica especializada em demandas judiciais.</p>
-                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                     <a href="https://wa.me/5519993364884?text=@Uri.EscapeDataString("Olá Dra. Priscila. Gostaria de receber informações sobre como funciona o atendimento.")" target="_blank" class="btn btn-whatsapp">
                         <i class="fab fa-whatsapp"></i> Agendar Consulta
                     </a>
                     <a href="#atuacao" class="btn btn-outline">
                         Conhecer Atuação
                     </a>
+                    @if (!string.IsNullOrEmpty(ViewBag.InstitutionalVideoId))
+                    {
+                        <a href="#sobre-video" class="btn-video-hero" title="Assistir vídeo de apresentação">
+                            <span class="btn-video-icon"><i class="fas fa-play"></i></span>
+                            <span>Ver Apresentação</span>
+                        </a>
+                    }
                 </div>
             </div>
             <div class="hero-image-container">
@@ -213,11 +220,37 @@
 </section>
 
 <!-- About Section (Dynamic) -->
-<section id="sobre" class="section-about">
+<section id="sobre" class="section-about" style="background-color: var(--bg-creme-dark); padding: 90px 0;">
     <div class="container">
-        <div class="section-title" style="margin-bottom: 50px;">
-            <h2>Sobre a Profissional</h2>
+        <div class="section-title" style="margin-bottom: 45px;">
+            <span style="text-transform: uppercase; letter-spacing: 3px; font-weight: 700; color: var(--secondary-color); font-size: 0.85rem; display: block; margin-bottom: 12px;">Conheça a Profissional</span>
+            <h2>Sobre a Dra. Priscila Batista</h2>
+            <p>Trajetória ética, acolhimento humanizado e sólida atuação clínica e jurídica.</p>
         </div>
+
+        @if (!string.IsNullOrEmpty(ViewBag.InstitutionalVideoId))
+        {
+            <div id="sobre-video" class="institutional-video-wrapper" style="max-width: 900px; margin: 0 auto 50px;">
+                <div class="institutional-video-card">
+                    <div class="institutional-video-header">
+                        <span class="video-badge"><i class="fas fa-play-circle"></i> Apresentação em Vídeo</span>
+                        <h3 class="serif" style="margin: 8px 0 6px; font-size: 1.6rem; color: var(--primary-color);">Um Convite ao Cuidado & Acolhimento</h3>
+                        <p class="video-subtext">Assista à mensagem da psicóloga e conheça como funciona o espaço terapêutico e a assistência técnica.</p>
+                    </div>
+                    <div class="video-responsive-container">
+                        <iframe 
+                            src="https://www.youtube-nocookie.com/embed/@(ViewBag.InstitutionalVideoId)?rel=0&modestbranding=1" 
+                            title="Vídeo de Apresentação Institucional - Dra. Priscila Batista" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        }
+
         <div class="about-content" style="max-width: 900px; margin: 0 auto;">
             @Html.Raw(ViewBag.AboutContent)
         </div>

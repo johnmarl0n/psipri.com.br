@@ -768,3 +768,115 @@ section {
         transform: translateY(0);
     }
 }
+
+/* --- Institutional Video Section & Hero Play Button --- */
+.btn-video-hero {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--primary-color);
+    background: rgba(166, 139, 92, 0.12);
+    border: 1px solid rgba(166, 139, 92, 0.3);
+    transition: var(--transition-fast);
+}
+
+.btn-video-hero:hover {
+    background: rgba(166, 139, 92, 0.22);
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
+    color: var(--primary-color);
+}
+
+.btn-video-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--secondary-color);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    padding-left: 2px;
+    box-shadow: 0 4px 10px rgba(166, 139, 92, 0.35);
+    transition: var(--transition-fast);
+}
+
+.btn-video-hero:hover .btn-video-icon {
+    transform: scale(1.1);
+    background-color: var(--secondary-hover);
+}
+
+.institutional-video-wrapper {
+    width: 100%;
+}
+
+.institutional-video-card {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    padding: 35px 35px 40px;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid rgba(166, 139, 92, 0.22);
+    position: relative;
+}
+
+.institutional-video-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.video-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--secondary-color);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.video-subtext {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin: 6px auto 0;
+    max-width: 600px;
+    line-height: 1.6;
+}
+
+.video-responsive-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    border-radius: var(--border-radius-sm);
+    background: #000000;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.video-responsive-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+@media (max-width: 768px) {
+    .institutional-video-card {
+        padding: 20px 16px 24px;
+        border-radius: 16px;
+    }
+
+    .btn-video-hero {
+        width: 100%;
+        justify-content: center;
+    }
+}

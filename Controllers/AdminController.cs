@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using psipri.com.br.Data;
 using psipri.com.br.Models;
+using psipri.com.br.Services;
 using System.Threading.Tasks;
 
 namespace psipri.com.br.Controllers
@@ -28,6 +29,11 @@ namespace psipri.com.br.Controllers
         {
             var heroImage = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "HeroImage");
             ViewBag.HeroImage = heroImage?.Value ?? "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800";
+
+            var videoSetting = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+            ViewBag.InstitutionalVideoUrl = videoSetting?.Value;
+            ViewBag.InstitutionalVideoId = YouTubeHelper.ExtractVideoId(videoSetting?.Value);
+
             return View();
         }
 
@@ -186,6 +192,81 @@ namespace psipri.com.br.Controllers
 
             await _context.SaveChangesAsync();
             TempData["Success"] = "Biografia atualizada com sucesso!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        // --- Institutional Video Management ---
+
+        /// <summary>
+        /// View for managing the institutional video link.
+        /// </summary>
+        public async Task<IActionResult> Video()
+        {
+            var video = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+            ViewBag.VideoUrl = video?.Value ?? "";
+            ViewBag.VideoId = YouTubeHelper.ExtractVideoId(video?.Value);
+            return View();
+        }
+
+        /// <summary>
+        /// Updates the institutional video URL from YouTube.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateVideo(string? videoUrl)
+        {
+            if (string.IsNullOrWhiteSpace(videoUrl))
+            {
+                var existing = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+                if (existing != null)
+                {
+                    _context.SiteContents.Remove(existing);
+                    await _context.SaveChangesAsync();
+                }
+                TempData["Success"] = "Vídeo institucional removido do site!";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var videoId = YouTubeHelper.ExtractVideoId(videoUrl);
+            if (string.IsNullOrEmpty(videoId))
+            {
+                ModelState.AddModelError("videoUrl", "Link do YouTube inválido. Certifique-se de colar uma URL válida do YouTube (ex: https://www.youtube.com/watch?v=... ou https://youtu.be/...).");
+                ViewBag.VideoUrl = videoUrl;
+                ViewBag.VideoId = null;
+                return View("Video");
+            }
+
+            var videoSetting = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+            if (videoSetting == null)
+            {
+                videoSetting = new SiteContent { Key = "InstitutionalVideoUrl", Value = videoUrl.Trim() };
+                _context.SiteContents.Add(videoSetting);
+            }
+            else
+            {
+                videoSetting.Value = videoUrl.Trim();
+                _context.SiteContents.Update(videoSetting);
+            }
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Vídeo institucional atualizado com sucesso!";
+            return RedirectToAction(nameof(Index));
+        }
+
+        /// <summary>
+        /// Removes the institutional video.
+        /// </summary>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveVideo()
+        {
+            var video = await _context.SiteContents.FirstOrDefaultAsync(c => c.Key == "InstitutionalVideoUrl");
+            if (video != null)
+            {
+                _context.SiteContents.Remove(video);
+                await _context.SaveChangesAsync();
+            }
+            TempData["Success"] = "Vídeo institucional removido com sucesso!";
             return RedirectToAction(nameof(Index));
         }
     }
